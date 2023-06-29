@@ -1,0 +1,10 @@
+export default {
+    SUCCESS : 'success',
+    INFO : 'info',
+    ERROR : 'error',
+
+
+    FIELD_REQUIRED : 'THIS FIELD IS REQUIRED',
+    MAX_LIMIT_EXCEED : 'MAXIMUM LIMIT EXCEED',
+    ALL_FIELD_REQUIRED : 'ALL FIELDS ARE REQUIRED',
+}

@@ -36,3 +36,11 @@
     transform: rotate(360deg);
   }
 }
+
+.main-body {
+  color: #000000;
+}
+
+.snkacbar {
+  margin-top: 5rem;
+}
