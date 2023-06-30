@@ -67,18 +67,18 @@ import { Grid } from '@mui/material';
 //         userLost: 234
 //     }
 // ];
-function sortFunction(a,b){
+function sortFunction(a, b) {
     var dateA = new Date(a._id.date_created).getTime();
     var dateB = new Date(b._id.date_created).getTime();
-    return dateB > dateA ? 1 : -1; 
- }; 
+    return dateB > dateA ? 1 : -1;
+};
 
 function Index({ invoiceList, setTotalPcs }) {
     const [chartData, setChartData] = useState({
         labels: '',
         datasets: [
             {
-                label: "Users Gained ",
+                label: "Pcs ",
                 data: 0,
                 backgroundColor: [
                     "rgba(75,192,192,1)",
@@ -105,15 +105,14 @@ function Index({ invoiceList, setTotalPcs }) {
             if (array[array.length - 1]?.year == obj.year && array.length < 5) {
                 array[array.length - 1].pcs = array[array.length - 1].pcs + obj.pcs
             }
-            else if(array.length < 5) {
+            else if (array.length < 5) {
                 array.push(obj)
             }
         });
 
         let totalPcs = array.reduce((prev, next) => prev + next.pcs, 0);
-        console.log("totalPcs ",totalPcs);
         setTotalPcs(totalPcs);
-        
+
         setChartData({
             labels: array.map((data) => data.year),
             datasets: [
@@ -141,9 +140,6 @@ function Index({ invoiceList, setTotalPcs }) {
 
     return (
         <div className="App">
-            {/* <PieChart chartData={chartData} />
-            <BarChart chartData={chartData} /> */}
-
             <Grid sx={{ marginTop: "0px" }} container spacing={3}>
                 <Grid item xs={12} sm={12} xl={6}>
                     <PieChart chartData={chartData} />

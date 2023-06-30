@@ -73,7 +73,7 @@ function SignIn() {
   const handleSubmit = () => {
     let checkError = checkFieldValues(addUser);
     if (checkError == true) {
-      fetch('http://localhost:4000/darshan-creation/auth/login/checkUser/v1', {
+      fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/auth/login/checkUser/v1`, {
         method: 'POST',
         headers: {
           "Content-Type": "application/json"

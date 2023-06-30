@@ -110,7 +110,7 @@ export default function BillItems({ billHeaders, validate, snackbar, setSnackbar
             }
 
             dispatch({ type: 'SET_LOADING' })
-            await fetch('http://localhost:4000/darshan-creation/save/newInvoice/6418a3a460d617f446e86e52/v1', {
+            await fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/save/newInvoice/6418a3a460d617f446e86e52/v1`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ obj })
@@ -125,7 +125,8 @@ export default function BillItems({ billHeaders, validate, snackbar, setSnackbar
                 })
         }
         else {
-            console.log(">>>> NoT Validated <<<<<<");
+            setSnackbar({ ...snackbar, status: true, message: "USER NOT AUTHORISED", severity: Constants.ERROR })
+            console.log(">>>> CLEAR LOCAL STORAGE ITEMS <<<<<<");
         }
     }
 

@@ -38,8 +38,6 @@ function InvoiceReducer(state, action) {
             }
 
         case 'ADD_NEW_INVOICE':
-            console.log("Reducer invoiceList :- ",state.invoiceList);
-            console.log("action.payload :- ",action.payload);
             return {
                 ...state,
                 isLoading: false,

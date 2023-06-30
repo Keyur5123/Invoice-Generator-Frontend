@@ -70,7 +70,7 @@ function SignUp() {
   const handleSubmit = () => {
     let checkError = checkFieldValues(newUser);
     if (checkError == true && newUser.password === newUser.confirm_password) {
-      fetch('http://localhost:4000/darshan-creation/auth/register/addUser/v1', {
+      fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/auth/register/addUser/v1`, {
         method: 'POST',
         headers: {
           "Content-Type": "application/json"

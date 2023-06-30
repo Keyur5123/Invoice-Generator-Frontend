@@ -24,7 +24,7 @@ const AppProvider = ({ children }) => {
     const getInvoiceList = (token) => {
         dispatch({ type: 'SET_LOADING' })
         try {
-            fetch('http://localhost:4000/darshan-creation/check/allInvoices/1/v1',{
+            fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/check/allInvoices/1/v1`,{
                 headers: {Authentication: `Bearer ${token}`}
             })
                 .then(res => res.json())
