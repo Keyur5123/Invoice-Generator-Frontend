@@ -1,23 +1,25 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Grid, Typography } from '@mui/material';
 import Sidebar from "../../Components/Sidebar";
 import AnalyseCard from "./components/AnalyseCard";
 import Table from "../../Components/Table";
 import { motion } from "framer-motion";
 import { useInvoiceContext } from "../../Context/InvoiceContext";
-
-import Icon from "@mui/material/Icon";
+import Charts from "../../Components/Charts/LogRocket"
 
 // icons
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
-import GradientLineChart from "../../Components/Charts/LineChats/GradientLineChart"
-import { blueGrey, yellow } from '@mui/material/colors';
-
-import PieChart from "../../Components/Charts/LogRocket"
 
 function Dashboard() {
     const { state } = useInvoiceContext();
     let { invoiceList } = state
+    const [totalPcs, setTotalPcs] = useState(0);
+    const [totalAmount, setTotalAmount] = useState(0);
+
+    useEffect(() => {
+        let amount = invoiceList.reduce((prev,next) => prev + next._id.billTotalAmount, 0);
+        setTotalAmount(amount)
+    },[invoiceList]);
 
     return (
         <Sidebar>
@@ -33,7 +35,7 @@ function Dashboard() {
                         >
                             <AnalyseCard
                                 header="Total Revenue"
-                                amount="2,00,000"
+                                amount={totalAmount}
                                 trend="+55 %"
                                 icon={
                                     <CurrencyRupeeIcon sx={{ fontSize: "20px", color: "#fff" }} />
@@ -48,7 +50,7 @@ function Dashboard() {
                         >
                             <AnalyseCard
                                 header="Total PCS"
-                                amount="2000"
+                                amount={totalPcs}
                                 trend="+10 %"
                                 icon={
                                     <CurrencyRupeeIcon sx={{ fontSize: "20px", color: "#fff" }} />
@@ -86,7 +88,7 @@ function Dashboard() {
                     </Grid>
                 </Grid>
 
-                <PieChart />
+                <Charts invoiceList={invoiceList} setTotalPcs={setTotalPcs} />
 
                 <Box>
                     <Grid sx={{ marginTop: "0px" }} container spacing={3}>
