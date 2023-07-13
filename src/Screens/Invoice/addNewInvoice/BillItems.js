@@ -6,16 +6,18 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { Button, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material'
+import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material'
 
 import SubCategory from "./SubCategory"
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 import PaidSharpIcon from '@mui/icons-material/PaidSharp';
+import { useNavigate } from "react-router-dom";
 
 import { useInvoiceContext } from "../../../Context/InvoiceContext";
 import Constants from "../../../Utilities/Constants/responseConstants";
+import SelectCompo from "../../../Components/Select";
 
 const tableHeader = [
     {
@@ -70,8 +72,10 @@ const tableHeader = [
 
 ];
 
-export default function BillItems({ billHeaders, validate, snackbar, setSnackbar }) {
-    const { dispatch } = useInvoiceContext();
+export default function BillItems({ billHeaders, setBillHeaders, formatedDate, validate, snackbar, setSnackbar }) {
+    const navigate = useNavigate();
+    const { dispatch, state, userData } = useInvoiceContext();
+    let { invoiceList, isUserAuthorized } = state;
 
     const [billItems, setBillItems] = useState([
         {
@@ -94,9 +98,86 @@ export default function BillItems({ billHeaders, validate, snackbar, setSnackbar
     const [toggle, setToggle] = useState(false);
     const [itemValidationError, setItemValidationError] = useState([]);
 
-    const saveInvoice = async () => {
+    const [allProductsNameWithPrice, setAllProductsNameWithPrice] = useState([]);
+
+    useEffect(() => {
+        setBillSubTotalAmount(subTotal)
+    }, [toggle])
+
+    useEffect(() => {
+        getAllProductsNameWithPrice();
+    }, [invoiceList])
+
+    function getAllProductsNameWithPrice() {
+        setAllProductsNameWithPrice([]);
+        invoiceList.map(invoice => {
+            invoice.billItems.map(item => {
+                let obj = {};
+                obj.name = item.products[0].name
+                obj.rate = item.products[0].rate
+                setAllProductsNameWithPrice(allProductsNameWithPrice => [...allProductsNameWithPrice, obj])
+            })
+        })
+    }
+
+    const sendDataToServer = async(fieldObj) => {
+        await fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/save/newInvoice/${userData.userId}/v1`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fieldObj })
+        })
+            .then(data => data.json())
+            .then(data => {
+                dispatch({ type: 'ADD_NEW_INVOICE', payload: fieldObj })
+                setSnackbar({ ...snackbar, status: true, message: 'Invoice saved successfully', severity: Constants.SUCCESS })
+                // ==== Cleaning States ==== //
+                setBillItems([
+                    {
+                        partyChNo: '',
+                        description: '',
+                        pcs: '',
+                        mtr: '',
+                        rate: '',
+                        item_amount: ''
+                    }
+                ]);
+                setBillHeaders({
+                    partyName: '',
+                    address: '',
+                    billNo: '',
+                    date: formatedDate
+                });
+                setBillSubTotalAmount(0);
+                setDiscount(0);
+                setGst(0);
+                setSgst(0);
+                setCgst(0);
+                setTds(0);
+                setBillTotalAmount(0);
+            })
+            .catch(err => {
+                setSnackbar({ ...snackbar, status: true, message: err.message, severity: Constants.ERROR })
+            })
+    }
+
+    const checkIsValueChage = () => {
+        billItems.map(item => {
+            allProductsNameWithPrice.map(prod => {
+                if(prod.name === item.description && prod.rate != item.rate) {
+                    // Call API for UPDATING RATE OF PRODUCT
+                    console.log("Please select :- ", prod.rate, item.rate);
+                }
+                else{
+                    console.log("not changed");
+                }
+            })
+
+        })
+    }
+
+    const saveInvoice = () => {
         if (validate() == true) {
-            var obj = {
+            var fieldObj = {
                 party_name: billHeaders.partyName,
                 address: billHeaders.address,
                 bill_no: billHeaders.billNo,
@@ -110,24 +191,18 @@ export default function BillItems({ billHeaders, validate, snackbar, setSnackbar
             }
 
             dispatch({ type: 'SET_LOADING' })
-            await fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/save/newInvoice/6418a3a460d617f446e86e52/v1`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ obj })
-            })
-                .then(data => data.json())
-                .then(data => {
-                    dispatch({ type: 'ADD_NEW_INVOICE', payload: obj })
-                    setSnackbar({ ...snackbar, status: true, message: 'Invoice saved successfully', severity: Constants.SUCCESS })
-                })
-                .catch(err => {
-                    setSnackbar({ ...snackbar, status: true, message: err.message, severity: Constants.ERROR })
-                })
+            sendDataToServer(fieldObj);
+            checkIsValueChage();
         }
         else {
-            setSnackbar({ ...snackbar, status: true, message: "USER NOT AUTHORISED", severity: Constants.ERROR })
+            checkIsValueChage();
+            setSnackbar({ ...snackbar, status: true, message: "Invoice is not added", severity: Constants.ERROR })
             console.log(">>>> CLEAR LOCAL STORAGE ITEMS <<<<<<");
         }
+    }
+
+    const cancleInvoice = () => {
+        navigate('/invoice-list')
     }
 
     let subTotal = billItems.reduce((prev, curr) => {
@@ -136,10 +211,6 @@ export default function BillItems({ billHeaders, validate, snackbar, setSnackbar
         }
         else return prev
     }, 0)
-
-    useEffect(() => {
-        setBillSubTotalAmount(subTotal)
-    }, [toggle])
 
     let checkTableItemValues = (Item) => {
         let temp = {}
@@ -174,7 +245,7 @@ export default function BillItems({ billHeaders, validate, snackbar, setSnackbar
     }
 
     const handleChange = (e, index) => {
-        e.preventDefault();
+        (typeof e == Object || typeof e == 'object') && e.preventDefault();
         let allObj = [...billItems]
         allObj[index][e.target.name] = e.target.value;
 
@@ -184,10 +255,28 @@ export default function BillItems({ billHeaders, validate, snackbar, setSnackbar
         }
     }
 
+    const AutoFillRate = (idx, clearVal=false) => {
+        billItems.map(item => {
+            allProductsNameWithPrice.map(prod => {
+                if (item.description == prod.name) {
+                    let temp = [...billItems];
+                    temp[idx].rate = prod.rate.toString();
+                    clearVal && (temp[idx].rate = '')
+                    setBillItems(temp)
+                }
+            })
+        })
+    }
+
+    const handleDescription = (e, index) => {
+        let allObj = [...billItems];
+        allObj[index]['description'] = e ? e : '';
+        e?.length > 0 ? AutoFillRate(index) : AutoFillRate(index,true);
+    }
+
     const handleDiscount = (e) => {
         setDiscount(Math.abs(e.target.value))
     }
-
     const handleGst = (e) => {
         setGst(Math.abs(e.target.value))
     }
@@ -225,8 +314,8 @@ export default function BillItems({ billHeaders, validate, snackbar, setSnackbar
     return (
         <>
             <Paper sx={{ width: '100%' }} className='mt-5'>
+                {/* // , maxWidth : 300,, minHeight: 200 */}
                 <TableContainer sx={{ maxHeight: 440 }}>
-                    {/* // , maxWidth : 300,, minHeight: 200 */}
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                             <TableRow>
@@ -235,7 +324,7 @@ export default function BillItems({ billHeaders, validate, snackbar, setSnackbar
                                         key={column.id}
                                         sx={{ color: 'text.normal', backgroundColor: 'background.primary', border: '1px solid #d6d6d7', fontSize: 16, fontWeight: 400 }}
                                         align={column.align}
-                                        style={{ minWidth: column.minWidth }}
+                                        style={{ maxWidth: column.minWidth }}
                                     >
                                         {column.label}
                                     </TableCell>
@@ -255,7 +344,8 @@ export default function BillItems({ billHeaders, validate, snackbar, setSnackbar
                                                         {item != 'description' && item != 'item_amount' ?
                                                             item != 'description' && <TextField
                                                                 required
-                                                                defaultValue={value}
+                                                                // defaultValue={value}
+                                                                value={value}
                                                                 name={item}
                                                                 onChange={(e) => { handleChange(e, id) }}
                                                                 placeholder={item}
@@ -264,6 +354,7 @@ export default function BillItems({ billHeaders, validate, snackbar, setSnackbar
                                                                 {...(itemValidationError[index] && ({ error: true, helperText: itemValidationError[index][item] }))}
                                                             />
                                                             :
+                                                            // Below text box just for showing Total Amount of PCS & Rate
                                                             item != 'description' && <TextField
                                                                 value={value}
                                                                 name={item}
@@ -271,21 +362,13 @@ export default function BillItems({ billHeaders, validate, snackbar, setSnackbar
                                                                 placeholder={item}
                                                                 size='small'
                                                                 variant="outlined" />
-                                                            // <p className='bg-slate-500 p-2'>{value ? value : 0}</p>
-                                                            // <Button color="success" variant="outlined">{value ? value : 0}</Button>
                                                         }
                                                         {item == 'description' &&
                                                             <React.Fragment>
-                                                                <TextField
-                                                                    value={value}
-                                                                    name={item}
-                                                                    onChange={(e) => { handleChange(e, id) }}
-                                                                    placeholder={item}
-                                                                    size='small'
-                                                                    variant="outlined" />
-                                                                {/* <div className='w-full bg-slate-200 mt-1 overflow-hidden '>
-                                                                {['1','3'].map(ele => <p>dfdsfdf</p>)}
-                                                            </div> */}
+                                                                <SelectCompo
+                                                                    handleChange={handleDescription}
+                                                                    id={id}
+                                                                />
                                                             </React.Fragment>
                                                         }
                                                     </TableCell>
@@ -315,13 +398,13 @@ export default function BillItems({ billHeaders, validate, snackbar, setSnackbar
                     handleTds={handleTds}
                     getTotalAmount={getTotalAmount}
                 />
-            </Paper>
-            <div className='mt-5 flex justify-center'>
-                <div className='container grid md:grid-cols-3 gap-4 xs:grid-rows-1'>
+            </Paper >
+            <div className='mt-7 flex justify-center'>
+                <div className='container grid md:grid-cols-3 gap-4 xs:grid-rows-1 mb-10'>
                     <Button className='m-5 w-100' color="secondary" variant="outlined" startIcon={<VisibilityIcon />}>
                         View Mode
                     </Button>
-                    <Button variant="outlined" color="error" startIcon={<CloseSharpIcon />}>
+                    <Button variant="outlined" color="error" onClick={cancleInvoice} startIcon={<CloseSharpIcon />}>
                         Cancel Bill
                     </Button>
                     <Button variant="outlined" color="success" onClick={saveInvoice} startIcon={<PaidSharpIcon />}>

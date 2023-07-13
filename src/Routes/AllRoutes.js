@@ -14,7 +14,7 @@ import {useInvoiceContext} from "../Context/InvoiceContext";
 function AnimatedRoutes() {
     const location = useLocation();
     let token = localStorage.getItem("invoice_dc_token");
-    const { userData } = useInvoiceContext();
+    
     return (
         <AnimatePresence>
             <Routes location={location} key={location.pathname}>
