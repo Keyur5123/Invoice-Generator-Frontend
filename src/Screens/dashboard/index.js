@@ -5,24 +5,44 @@ import AnalyseCard from "./components/AnalyseCard";
 import Table from "../../Components/Table";
 import { motion } from "framer-motion";
 import { useInvoiceContext } from "../../Context/InvoiceContext";
-import Charts from "../../Components/Charts/LogRocket"
+import Charts from "../../Components/Charts/LogRocket";
+import { useNavigate } from 'react-router-dom';
+
+import Snackbar from '../../Components/Snackbar';
 
 // icons
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 
 function Dashboard() {
-    const { state } = useInvoiceContext();
-    let { invoiceList } = state
+    const navigate = useNavigate();
+    const { isLoading, state, contextSnackbar, setContextSnackbar } = useInvoiceContext();
+    let { invoiceList, isUserAuthorized } = state
     const [totalPcs, setTotalPcs] = useState(0);
     const [totalAmount, setTotalAmount] = useState(0);
 
     useEffect(() => {
-        let amount = invoiceList.reduce((prev,next) => prev + next._id.billTotalAmount, 0);
+        let amount = invoiceList.reduce((prev, next) => prev + next._id.billTotalAmount, 0);
         setTotalAmount(amount)
-    },[invoiceList]);
+    }, [invoiceList]);
+
+    if (isLoading) {
+        return <p>Loading ....</p>
+    }
+
+    if (!isUserAuthorized) {
+        localStorage.removeItem('invoice_dc_token');
+        localStorage.removeItem('userData');
+        navigate('/login');
+    }
 
     return (
         <Sidebar>
+            <div>
+                <Snackbar
+                    snackbar={contextSnackbar}
+                    setSnackbar={setContextSnackbar}
+                />
+            </div>
             <motion.div
                 initial={{ x: "-100vw" }}
                 animate={{ x: 0 }}

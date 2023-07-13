@@ -14,26 +14,28 @@ import Select from "@mui/material/Select";
 import { FormHelperText } from '@mui/material';
 
 import { useInvoiceContext } from "../../../Context/InvoiceContext";
+import SelectCompo from "../../../Components/Select";
 
 export default function Home() {
+
+  const { isLoading, state, dispatch, contextSnackbar, setContextSnackbar } = useInvoiceContext();
+
+  let currDate = new Date;
+  let formatedDate = [currDate.getDate(), currDate.getMonth() + 1, currDate.getFullYear()].join('-');
 
   const [snackbarData, setSnackbarData] = useState({
     status: false,
     message: '',
     severity: ''
   })
-
   const [billHeaders, setBillHeaders] = useState({
     partyName: '',
     address: '',
     billNo: '',
-    date: ''
+    date: formatedDate
   });
 
   const [errors, setErrors] = useState({});
-
-  const { isLoading, state, dispatch, contextSnackbar, setContextSnackbar } = useInvoiceContext();
-  let { invoiceList } = state
 
   const validate = () => {
     let errObj = {};
@@ -49,9 +51,17 @@ export default function Home() {
     setBillHeaders({ ...billHeaders, [e.target.name]: e.target.value })
   }
 
+  let handlePartyName = (e) => {
+    setBillHeaders({ ...billHeaders, partyName: e })
+  }
+
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
   });
+
+  if (isLoading) {
+    return <p>Loading ....</p>
+  }
 
   return (
     <Sidebar>
@@ -69,38 +79,13 @@ export default function Home() {
           <div className='flex flex-col items-center'>
             <div className='flex items-center justify-between min-w-[50%] mt-5'>
               <h6 className='mr-5'>Party Name</h6>
-              {/* <TextFieldControl
-                size='small'
-                label="Party Name"
-                name="partyName"
-                variant="outlined"
-                onChange={handleChange}
-                error={errors.partyName}
-              /> */}
-              <FormControl>
-                <InputLabel id="demo-simple-select-autowidth-label"><p className={(errors && errors?.partyName) && 'text-red-700'}>Party Name</p></InputLabel>
-                <Select
-                  displayEmpty
-                  labelId="demo-simple-select-autowidth-label"
-                  id="demo-simple-select-autowidth"
-                  name="partyName"
-                  onChange={handleChange}
-                  autoWidth
-                  label="Party Name"
-                  size='sm'
-                  sx={{ height: 42, width: 222 }}
+              <div>
+                <SelectCompo
+                  handleChange={handlePartyName}
+                />
+                {errors.partyName && <p className='font-normal text-[12px] text-[#d54f4f] ml-4 mt-1'>{errors.partyName}</p>}
 
-                  error={errors.partyName}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  {invoiceList && invoiceList.length > 0 && invoiceList?.map(invoice => (
-                    <MenuItem value={invoice?._id?.party_name}>{invoice?._id?.party_name}</MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText><p className='text-red-600'>{errors && errors?.partyName}</p></FormHelperText>
-              </FormControl>
+              </div>
             </div>
             <div className='flex items-center mt-5 justify-between min-w-[50%]'>
               <h6 className='mr-5'>Address</h6>
@@ -131,8 +116,9 @@ export default function Home() {
               <h6 className='mr-5'>Date</h6>
               <TextFieldControl
                 size='small'
-                label="Date"
+                label={billHeaders.date}
                 name="date"
+                defaultValue={billHeaders.date}
                 variant="outlined"
                 onChange={handleChange}
                 error={errors.date}
@@ -143,6 +129,8 @@ export default function Home() {
 
         <BillItems
           billHeaders={billHeaders}
+          setBillHeaders={setBillHeaders}
+          formatedDate={formatedDate}
           validate={validate}
           snackbar={snackbarData}
           setSnackbar={setSnackbarData}

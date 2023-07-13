@@ -8,11 +8,13 @@ import SignIn from "../Screens/authentication/SignIn";
 import SignUp from "../Screens/authentication/SignUp";
 import { AnimatePresence } from "framer-motion";
 import ProtectedRoute from './ProtectedRoute';
-import NotFoundPage from "../Screens/NotFoundPage"
+import NotFoundPage from "../Screens/NotFoundPage";
+import {useInvoiceContext} from "../Context/InvoiceContext";
 
 function AnimatedRoutes() {
-    let token = localStorage.getItem("token");
     const location = useLocation();
+    let token = localStorage.getItem("invoice_dc_token");
+    
     return (
         <AnimatePresence>
             <Routes location={location} key={location.pathname}>
@@ -24,6 +26,7 @@ function AnimatedRoutes() {
                         <Route path="/add-new-invoice" element={<ProtectedRoute token={token} Component={AddNewInvoice} />} />
                         <Route path="/generate-invoice-pdf/:invoice_id" element={<ProtectedRoute token={token} Component={GeneratePdf} />} />
                         <Route path="/invoice-list" element={<ProtectedRoute token={token} Component={InvoicesList} />} />
+                        <Route path="/not-found" element={<NotFoundPage />} />
                         <Route path="*" element={<NotFoundPage />} />
                     </React.Fragment>
                     :

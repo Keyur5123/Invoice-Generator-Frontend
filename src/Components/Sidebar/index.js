@@ -26,6 +26,7 @@ import ConverImg from '../../assets/images/ConverImg.jpg';
 import { ReactComponent as Logout } from '../../assets/icons/logout.svg';
 import { SvgIcon } from '@mui/material';
 import { useNavigate } from "react-router-dom";
+import { useInvoiceContext } from "../../Context/InvoiceContext";
 
 const drawerWidth = 300;
 
@@ -77,6 +78,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 export default function PersistentDrawerLeft({ children }) {
 
     const navigate = useNavigate();
+    const { userData } = useInvoiceContext();
     const [open, setOpen] = React.useState(false);
 
     const handleDrawerOpen = () => {
@@ -88,7 +90,8 @@ export default function PersistentDrawerLeft({ children }) {
     };
 
     const handleLogOut = () => {
-        localStorage.removeItem("token");
+        localStorage.removeItem("invoice_dc_token");
+        localStorage.removeItem("userData");
         navigate('/login');
     }
 
@@ -140,7 +143,7 @@ export default function PersistentDrawerLeft({ children }) {
                 <div className='h-full flex flex-col justify-between'>
                     <div>
                         <List>
-                            <Link to="/dashboard">
+                            <Link to="/dashboard" className='no-underline text-white hover:text-white hover:no-underline'>
                                 <ListItem disablePadding>
                                     <ListItemButton>
                                         <ListItemIcon sx={{ color: 'sidebar.text.primary' }}>
@@ -150,7 +153,7 @@ export default function PersistentDrawerLeft({ children }) {
                                     </ListItemButton>
                                 </ListItem>
                             </Link>
-                            <Link to="/invoice-list">
+                            <Link to="/invoice-list" className='no-underline text-white hover:text-white hover:no-underline'>
                                 <ListItem disablePadding>
                                     <ListItemButton>
                                         <ListItemIcon sx={{ color: 'sidebar.text.primary' }}>
@@ -179,7 +182,7 @@ export default function PersistentDrawerLeft({ children }) {
                                 </div>
                                 <div className='ml-3'>
                                     <Typography variant='p' noWrap component={"div"}>
-                                        Jitesh Pipaliya
+                                        {userData?.userName}
                                     </Typography>
                                 </div>
                             </div>
