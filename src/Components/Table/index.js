@@ -84,7 +84,6 @@ function Row(props) {
 }
 
 function TableComponent({ isExtractable, invoiceList, isPaginationAllowed }) {
-    console.log("invoiceList :- ",invoiceList);
     
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -99,11 +98,11 @@ function TableComponent({ isExtractable, invoiceList, isPaginationAllowed }) {
     };
 
     return (
-        <div className='mt-4'>
-            <Box sx={{ width: '100%' }}>
-                <Paper sx={{ width: '100%', mb: 2 }}>
+        <div className='mt-4 '>
+            <Box sx={{ width: '100%'}}>
+                <Paper sx={{ mb: 2 }}>
                     <TableContainer>
-                        <Table sx={{ minWidth: 750 }} aria-label="collapsible table">
+                        <Table aria-label="collapsible table">
                             <TableHead>
                                 <TableRow>
                                     {

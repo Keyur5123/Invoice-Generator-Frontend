@@ -83,17 +83,17 @@ function SignIn() {
         .then(res => res.json())
         .then(res => {
           if (res.status === 200) {
-            addUser.rememberMe && localStorage.setItem('token', res.data)
+            addUser.rememberMe && localStorage.setItem('invoice_dc_token', res.data.token);
+            localStorage.setItem('userData', JSON.stringify({ userId:res.data.userId, userName: res.data.userName, roleId: res.data.roleId }));
             setContextSnackbar({
               ...contextSnackbar,
               status: true,
               message: res.msg,
               severity: Constants.SUCCESS
             })
-            navigate('/dashboard')
+            navigate('/dashboard');
           }
           else {
-            console.log("res :- ",res);
             setContextSnackbar({
               ...contextSnackbar,
               status: true,

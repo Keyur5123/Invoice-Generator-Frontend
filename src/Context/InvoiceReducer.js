@@ -6,6 +6,12 @@ function InvoiceReducer(state, action) {
                 isLoading: true
             }
 
+        case 'SET_USER_NOT_AUTHORIZED':
+            return {
+                ...state,
+                isUserAuthorized: false
+            }
+
         case 'SET_API_ERROR':
             return {
                 ...state,
@@ -13,7 +19,6 @@ function InvoiceReducer(state, action) {
             }
 
         case 'SET_INVOICE_DATA':
-
             let invoiceList = action.payload;
             let products = [];
             let partyList = [];

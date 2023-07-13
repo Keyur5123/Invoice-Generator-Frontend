@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Button, Box, Grid } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useInvoiceContext } from "../../Context/InvoiceContext";
 
 import Sidebar from '../../Components/Sidebar';
@@ -10,11 +10,18 @@ import Table from "../../Components/Table";
 
 export default function InvoicesList() {
 
+  const navigate = useNavigate();
   const { isLoading, state, dispatch, contextSnackbar, setContextSnackbar } = useInvoiceContext();
-  let { invoiceList } = state
+  let { invoiceList, isUserAuthorized } = state
 
-  if (isLoading == true) {
+  if (isLoading) {
     return <p>Loading ....</p>
+  }
+
+  if (!isUserAuthorized) {
+    localStorage.removeItem('invoice_dc_token');
+    localStorage.removeItem('userData');
+    navigate('/login');
   }
 
   return (
@@ -42,14 +49,6 @@ export default function InvoicesList() {
           </div>
         </div>
 
-        {/* <Box>
-          <Table
-            isExtractable={true}
-            invoiceList={invoiceList}
-            isPaginationAllowed={true}
-          />
-        </Box> */}
-        <Box>
           <Grid sx={{ marginTop: "0px" }} container spacing={3}>
             <Grid item xs={12}>
               <Table
@@ -59,7 +58,6 @@ export default function InvoicesList() {
               />
             </Grid>
           </Grid>
-        </Box>
       </>
     </Sidebar>
 
