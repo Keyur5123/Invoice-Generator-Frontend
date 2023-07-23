@@ -8,14 +8,13 @@ const styles = StyleSheet.create({
   tableContainer: {
     flexDirection: "column",
     flexWrap: "wrap",
-    margin : 20,
-    color : 'blue',
-    flex : 1,
+    margin: 20,
+    color: 'blue',
+    flex: 1,
   }
 });
 
 const ItemsTable = ({ invoiceList }) => {
-  console.log("invoiceList >>>>>>> ",invoiceList);
   let subHeaderData = {};
   subHeaderData.party_name = invoiceList._id.party_name;
   subHeaderData.address = invoiceList._id.address;
@@ -23,21 +22,21 @@ const ItemsTable = ({ invoiceList }) => {
   subHeaderData.date = invoiceList._id.date_created;
   subHeaderData.partyChNo = invoiceList.billItems.map((item) => {
     return item.partyChNo
-  })
+  });
 
   return (
-    <View style={styles.tableContainer}>
+    <View style={styles.tableContainer} >
       <TableHeader subHeaderData={subHeaderData} />
       <TableRow items={invoiceList.billItems} />
-      <TableFooter 
-        discount={invoiceList.discount} 
-        gst={invoiceList.gst} 
-        sgst={invoiceList.sgst}  
-        cgst={invoiceList.cgst} 
+      <TableFooter
+        discount={invoiceList.discount}
+        gst={invoiceList.gst}
+        sgst={invoiceList.sgst}
+        cgst={invoiceList.cgst}
         tds={invoiceList.tds}
         billTotalAmount={invoiceList.billTotalAmount}
-        />
-    </View>
+      />
+    </View >
   )
 };
 

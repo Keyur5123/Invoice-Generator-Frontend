@@ -6,6 +6,9 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Link } from 'react-router-dom';
+import DownloadPdf from '../../Screens/DownloadPdf';
+import { PDFDownloadLink } from '@react-pdf/renderer'
+import GeneratePdf from '../pdfComponents/GeneratePdf'
 
 function Row(props) {
     const { isExtractable, row } = props;
@@ -84,7 +87,7 @@ function Row(props) {
 }
 
 function TableComponent({ isExtractable, invoiceList, isPaginationAllowed }) {
-    
+
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -99,7 +102,7 @@ function TableComponent({ isExtractable, invoiceList, isPaginationAllowed }) {
 
     return (
         <div className='mt-4 '>
-            <Box sx={{ width: '100%'}}>
+            <Box sx={{ width: '100%' }}>
                 <Paper sx={{ mb: 2 }}>
                     <TableContainer>
                         <Table aria-label="collapsible table">
@@ -128,8 +131,6 @@ function TableComponent({ isExtractable, invoiceList, isPaginationAllowed }) {
                                         <Row key={row._id} row={row} isExtractable={isExtractable} />
                                     ))
                                 }
-
-                                {/* {invoiceList && <Row row={invoiceList} isExtractable={isExtractable} />} */}
                             </TableBody>
                         </Table>
                     </TableContainer>

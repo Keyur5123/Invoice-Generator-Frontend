@@ -18,6 +18,7 @@ import ListItemText from '@mui/material/ListItemText';
 
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import DescriptionIcon from '@mui/icons-material/Description';
+import CategoryIcon from '@mui/icons-material/Category';
 import InfoIcon from '@mui/icons-material/Info';
 import { Link } from 'react-router-dom';
 import { Avatar, Button, Container, Divider } from '@mui/material';
@@ -160,6 +161,16 @@ export default function PersistentDrawerLeft({ children }) {
                                             <DescriptionIcon />
                                         </ListItemIcon>
                                         <ListItemText primary='Invoices' />
+                                    </ListItemButton>
+                                </ListItem>
+                            </Link>
+                            <Link to="/manage-product-and-party" className='no-underline text-white hover:text-white hover:no-underline'>
+                                <ListItem disablePadding>
+                                    <ListItemButton>
+                                        <ListItemIcon sx={{ color: 'sidebar.text.primary' }}>
+                                            <CategoryIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary='Product & Party' />
                                     </ListItemButton>
                                 </ListItem>
                             </Link>

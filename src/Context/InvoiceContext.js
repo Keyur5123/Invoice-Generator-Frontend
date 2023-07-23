@@ -8,8 +8,8 @@ const initialState = {
     isLoading: true,
     isUserAuthorized: true,
     invoiceList: [],
-    partyList: [],
-    products: [],
+    partyNameList: [],
+    productsList: [],
 }
 
 const AppProvider = ({ children }) => {
@@ -26,16 +26,16 @@ const AppProvider = ({ children }) => {
     const getInvoiceList = (token) => {
         dispatch({ type: 'SET_LOADING' })
         try {
-            fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/check/allInvoices/${userData.userId}/v1`,{
-                headers: {Authentication: `Bearer ${token}`}
+            fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/check/allInvoices/${userData.userId}/v1`, {
+                headers: { Authentication: `Bearer ${token}` }
             })
                 .then(res => res.json())
                 .then(response => {
-                    if(response?.data?.status === 200){
+                    if (response?.data?.status === 200) {
                         dispatch({ type: 'SET_INVOICE_DATA', payload: response.data.data })
                         setContextSnackbar({ ...contextSnackbar, status: true, message: response.data.msg, severity: Constants.SUCCESS })
                     }
-                    else if(response?.status === 401) {
+                    else if (response?.status === 401) {
                         dispatch({ type: 'SET_USER_NOT_AUTHORIZED' })
                         setContextSnackbar({ ...contextSnackbar, status: true, message: 'User not authorize', severity: Constants.ERROR })
                     }
@@ -50,16 +50,44 @@ const AppProvider = ({ children }) => {
                 })
         } catch (error) {
             dispatch({ type: 'SET_API_ERROR' })
-            setContextSnackbar({ ...contextSnackbar, status: true, message: error, severity: Constants.ERROR })
+            setContextSnackbar({ ...contextSnackbar, status: true, message: error.toString(), severity: Constants.ERROR })
+        }
+    }
+
+    let getAllPartyNameAndProductsList = async () => {
+        dispatch({ type: 'SET_LOADING' })
+        try {
+            await fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/product-and-party/check/all-products-and-partyFerms/${userData.userId}/v1`, {
+                headers: { Authentication: `Bearer ${token}` }
+            })
+                .then(response => response.json())
+                .then(response => {
+                    if (response.data.status == 200) {
+                        dispatch({ type: 'SET_PARTY_NAME_AND_PRODUCTS_NAME', payload: response?.data?.data })
+                        setContextSnackbar({ ...contextSnackbar, status: true, message: response.data.msg, severity: Constants.SUCCESS })
+                    }
+                    else {
+                        dispatch({ type: 'SET_API_ERROR' })
+                        setContextSnackbar({ ...contextSnackbar, status: true, message: response?.data?.err, severity: Constants.ERROR })
+                    }
+                })
+                .catch(err => {
+                    dispatch({ type: 'SET_API_ERROR' })
+                    setContextSnackbar({ ...contextSnackbar, status: true, message: err, severity: Constants.ERROR })
+                });
+        } catch (error) {
+            dispatch({ type: 'SET_API_ERROR' })
+            setContextSnackbar({ ...contextSnackbar, status: true, message: error.toString(), severity: Constants.ERROR })
         }
     }
 
     useEffect(() => {
         token && getInvoiceList(token);
+        token && getAllPartyNameAndProductsList();
     }, [token])
 
     return (
-        <AppContext.Provider value={{ state, dispatch, contextSnackbar, setContextSnackbar, userData }}>
+        <AppContext.Provider value={{ state, dispatch, contextSnackbar, setContextSnackbar, userData, token, getAllPartyNameAndProductsList }}>
             {children}
         </AppContext.Provider>
     )

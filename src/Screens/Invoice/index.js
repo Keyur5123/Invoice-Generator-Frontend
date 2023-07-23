@@ -11,8 +11,8 @@ import Table from "../../Components/Table";
 export default function InvoicesList() {
 
   const navigate = useNavigate();
-  const { isLoading, state, dispatch, contextSnackbar, setContextSnackbar } = useInvoiceContext();
-  let { invoiceList, isUserAuthorized } = state
+  const { isLoading, state, contextSnackbar, setContextSnackbar } = useInvoiceContext();
+  let { invoiceList, isUserAuthorized } = state;
 
   if (isLoading) {
     return <p>Loading ....</p>
@@ -23,7 +23,7 @@ export default function InvoicesList() {
     localStorage.removeItem('userData');
     navigate('/login');
   }
-
+  
   return (
     <Sidebar>
       <div>
