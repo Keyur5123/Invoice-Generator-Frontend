@@ -82,7 +82,7 @@ function TableFooter({ discount, gst, sgst, cgst, tds, billTotalAmount }) {
                         <Text style={{ paddingRight: "10px" }}>{tds}</Text>
                     </View>
                     <View style={styles.TaxName}>
-                        <Text style={{ paddingLeft : "5px"}}>Total %</Text>
+                        <Text style={{ paddingLeft : "5px"}}>Total</Text>
                         <Text style={{ paddingRight: "10px" }}>{billTotalAmount}</Text>
                     </View>
                 </View>

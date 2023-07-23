@@ -42,6 +42,15 @@ function InvoiceReducer(state, action) {
                 products: products
             }
 
+        case 'SET_PARTY_NAME_AND_PRODUCTS_NAME':
+            console.log("action ",action.payload);
+            return {
+                ...state,
+                partyNameList: action.payload.partyNameList,
+                productsList: action.payload.ProductsList
+            }
+
+
         case 'ADD_NEW_INVOICE':
             return {
                 ...state,

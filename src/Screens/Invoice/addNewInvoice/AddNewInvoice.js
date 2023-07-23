@@ -1,24 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import MuiAlert from '@mui/material/Alert';
 import TextFieldControl from '../../../Controls/TextFieldControl';
-
 import Sidebar from '../../../Components/Sidebar';
 import Snackbar from '../../../Components/Snackbar';
 import BillItems from "./BillItems";
 import Constants from "../../../Utilities/Constants/responseConstants";
-
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { FormHelperText } from '@mui/material';
-
 import { useInvoiceContext } from "../../../Context/InvoiceContext";
-import SelectCompo from "../../../Components/Select";
+import SelectCompo from "../../../Components/SelectDropDown";
 
 export default function Home() {
 
-  const { isLoading, state, dispatch, contextSnackbar, setContextSnackbar } = useInvoiceContext();
+  const { isLoading, state, contextSnackbar, setContextSnackbar } = useInvoiceContext();
+  let { partyNameList } = state;
 
   let currDate = new Date;
   let formatedDate = [currDate.getDate(), currDate.getMonth() + 1, currDate.getFullYear()].join('-');
@@ -71,6 +64,10 @@ export default function Home() {
             snackbar={snackbarData}
             setSnackbar={setSnackbarData}
           />
+          <Snackbar
+            snackbar={contextSnackbar}
+            setSnackbar={setContextSnackbar}
+          />
         </div>
 
         <span className='flex justify-center main-header'>Add New Invoice</span>
@@ -82,6 +79,7 @@ export default function Home() {
               <div>
                 <SelectCompo
                   handleChange={handlePartyName}
+                  ipArray={partyNameList}
                 />
                 {errors.partyName && <p className='font-normal text-[12px] text-[#d54f4f] ml-4 mt-1'>{errors.partyName}</p>}
 

@@ -84,7 +84,7 @@ function Dashboard() {
                         >
                             <AnalyseCard
                                 header="Potential Amount"
-                                amount="2,00,000"
+                                amount="0,00,000"
                                 trend="+55 %"
                                 icon={
                                     <CurrencyRupeeIcon sx={{ fontSize: "20px", color: "#fff" }} />
@@ -98,7 +98,7 @@ function Dashboard() {
                         >
                             <AnalyseCard
                                 header="Potential Amount"
-                                amount="2,00,000"
+                                amount="0,00,000"
                                 trend="+55 %"
                                 icon={
                                     <CurrencyRupeeIcon sx={{ fontSize: "20px", color: "#fff" }} />
@@ -112,14 +112,14 @@ function Dashboard() {
 
                 <Box>
                     <Grid sx={{ marginTop: "0px" }} container spacing={3}>
-                        <Grid item xs={12} sm={12} xl={9}>
+                        <Grid item xs={12} sm={8} xl={9}>
                             <Table
                                 isExtractable={false}
                                 invoiceList={invoiceList}
                                 isPaginationAllowed={false}
                             />
                         </Grid>
-                        <Grid item xs={12} sm={12} xl={3}>
+                        <Grid item xs={12} sm={8} xl={3}>
                             <Table
                                 isExtractable={false}
                                 invoiceList={invoiceList}

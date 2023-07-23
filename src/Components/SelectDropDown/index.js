@@ -1,10 +1,12 @@
+import { useEffect, useState } from 'react';
 import { SelectPicker } from 'rsuite';
 
-const data = ['product1', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert',].map(
-  item => ({ label: item, value: item })
-);
+const Index = ({ handleChange, id, ipArray }) => {
 
-const Index = ({ handleChange, id }) => {
+  const data = ipArray?.map(
+    item => ({ label: item?.name, value: item?._id })
+  );
+
   return (
     <>
       <SelectPicker name='description' data={data} style={{ width: 224 }} block onChange={(e) => {handleChange(e,id)}} />

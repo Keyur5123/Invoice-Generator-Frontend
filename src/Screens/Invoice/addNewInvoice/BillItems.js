@@ -6,7 +6,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material'
+import { Button, IconButton, TextField } from '@mui/material';
 
 import SubCategory from "./SubCategory"
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useInvoiceContext } from "../../../Context/InvoiceContext";
 import Constants from "../../../Utilities/Constants/responseConstants";
-import SelectCompo from "../../../Components/Select";
+import SelectCompo from "../../../Components/SelectDropDown";
 
 const tableHeader = [
     {
@@ -75,7 +75,7 @@ const tableHeader = [
 export default function BillItems({ billHeaders, setBillHeaders, formatedDate, validate, snackbar, setSnackbar }) {
     const navigate = useNavigate();
     const { dispatch, state, userData } = useInvoiceContext();
-    let { invoiceList, isUserAuthorized } = state;
+    let { productsList } = state;
 
     const [billItems, setBillItems] = useState([
         {
@@ -86,7 +86,7 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
             rate: '',
             item_amount: ''
         }
-    ])
+    ]);
 
     const [billSubTotalAmount, setBillSubTotalAmount] = useState(0);
     const [discount, setDiscount] = useState(0);
@@ -98,29 +98,29 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
     const [toggle, setToggle] = useState(false);
     const [itemValidationError, setItemValidationError] = useState([]);
 
-    const [allProductsNameWithPrice, setAllProductsNameWithPrice] = useState([]);
-
     useEffect(() => {
         setBillSubTotalAmount(subTotal)
     }, [toggle])
 
-    useEffect(() => {
-        getAllProductsNameWithPrice();
-    }, [invoiceList])
+    let subTotal = billItems.reduce((prev, curr) => {
+        if (curr.item_amount.trim().length > 0) {
+            return prev + Number(curr.item_amount)
+        }
+        else return prev
+    }, 0);
 
-    function getAllProductsNameWithPrice() {
-        setAllProductsNameWithPrice([]);
-        invoiceList.map(invoice => {
-            invoice.billItems.map(item => {
-                let obj = {};
-                obj.name = item.products[0].name
-                obj.rate = item.products[0].rate
-                setAllProductsNameWithPrice(allProductsNameWithPrice => [...allProductsNameWithPrice, obj])
-            })
-        })
+    const getTotalAmount = () => {
+        let total = billSubTotalAmount
+            - ((billSubTotalAmount * (discount)) / 100)
+            - ((billSubTotalAmount * (tds)) / 100)
+            + ((billSubTotalAmount * (gst)) / 100)
+            + ((billSubTotalAmount * (sgst)) / 100)
+            + ((billSubTotalAmount * (cgst)) / 100)
+        setBillTotalAmount(total)
+        return total
     }
 
-    const sendDataToServer = async(fieldObj) => {
+    const sendDataToServer = async (fieldObj) => {
         await fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/save/newInvoice/${userData.userId}/v1`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -160,19 +160,19 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
             })
     }
 
-    const checkIsValueChage = () => {
+    const checkAndUpdateProductPrice = () => {
+        let updatedProducts = [];
         billItems.map(item => {
-            allProductsNameWithPrice.map(prod => {
-                if(prod.name === item.description && prod.rate != item.rate) {
-                    // Call API for UPDATING RATE OF PRODUCT
-                    console.log("Please select :- ", prod.rate, item.rate);
-                }
-                else{
-                    console.log("not changed");
+            productsList.map(prod => {
+                if (prod._id === item.description && prod.rate != item.rate) {
+                    updatedProducts.push({ name: item.description, rate: item.rate })
                 }
             })
-
         })
+        if (updatedProducts.length > 0) {
+            // CALL API FOR CHANGE PRICE OF PRODUCTS
+            console.log("updatedProducts :- ", updatedProducts);
+        }
     }
 
     const saveInvoice = () => {
@@ -192,12 +192,11 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
 
             dispatch({ type: 'SET_LOADING' })
             sendDataToServer(fieldObj);
-            checkIsValueChage();
+            checkAndUpdateProductPrice();
         }
         else {
-            checkIsValueChage();
-            setSnackbar({ ...snackbar, status: true, message: "Invoice is not added", severity: Constants.ERROR })
-            console.log(">>>> CLEAR LOCAL STORAGE ITEMS <<<<<<");
+            // checkIsValueChage(); // Remove it.....................................................................
+            setSnackbar({ ...snackbar, status: true, message: "All fields are required", severity: Constants.ERROR });
         }
     }
 
@@ -205,27 +204,20 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
         navigate('/invoice-list')
     }
 
-    let subTotal = billItems.reduce((prev, curr) => {
-        if (curr.item_amount.trim().length > 0) {
-            return prev + Number(curr.item_amount)
-        }
-        else return prev
-    }, 0)
-
     let checkTableItemValues = (Item) => {
         let temp = {}
-        temp.partyChNo = Item.partyChNo ? '' : Constants.FIELD_REQUIRED
-        temp.description = Item.description ? '' : Constants.FIELD_REQUIRED
-        temp.pcs = Item.pcs ? '' : Constants.FIELD_REQUIRED
-        temp.mtr = Item.mtr ? '' : Constants.FIELD_REQUIRED
-        temp.rate = Item.rate ? '' : Constants.FIELD_REQUIRED
+        temp.partyChNo = Item?.partyChNo ? '' : Constants.FIELD_REQUIRED
+        temp.description = Item?.description ? '' : Constants.FIELD_REQUIRED
+        temp.pcs = Item?.pcs ? '' : Constants.FIELD_REQUIRED
+        temp.mtr = Item?.mtr ? '' : Constants.FIELD_REQUIRED
+        temp.rate = Item?.rate ? '' : Constants.FIELD_REQUIRED
         setItemValidationError(itemValidationError => ([...itemValidationError, temp]))
         return Object.values(temp).every(val => val == '')
     }
 
     const addNewItem = () => {
-        let validateUserFilledData = checkTableItemValues(billItems[billItems.length - 1])
-        if (validateUserFilledData && billItems.length < 13) {
+        let validateUserFilledData = checkTableItemValues(billItems[billItems.length - 1]);
+        if ((validateUserFilledData && billItems.length < 12) || billItems.length == 0) {
             const items = [...billItems, {
                 partyChNo: '',
                 description: '',
@@ -244,6 +236,22 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
         }
     }
 
+    const removeItem = (id) => {
+        if (billItems.length == 1 || (billItems[id].item_amount == 0 && id == 0)) {
+            alert("Can't Remove first item");
+        }
+        else {
+            let remainedItems = [];
+            billItems.map((item, index) => {
+                if (id !== index) {
+                    remainedItems.push(item)
+                }
+            })
+            setBillItems(remainedItems);
+            getTotalAmount();
+        }
+    }
+
     const handleChange = (e, index) => {
         (typeof e == Object || typeof e == 'object') && e.preventDefault();
         let allObj = [...billItems]
@@ -253,16 +261,19 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
             setToggle(!toggle)
             allObj[index]['item_amount'] = String(Number(allObj[index]['rate']) * Number(allObj[index]['pcs']))
         }
+        setBillItems(allObj)
     }
 
-    const AutoFillRate = (idx, clearVal=false) => {
+    const AutoFillRateField = (allObj, idx, clearVal = false) => {
         billItems.map(item => {
-            allProductsNameWithPrice.map(prod => {
-                if (item.description == prod.name) {
-                    let temp = [...billItems];
-                    temp[idx].rate = prod.rate.toString();
-                    clearVal && (temp[idx].rate = '')
-                    setBillItems(temp)
+            productsList.map(prod => {
+                if (item.description == prod._id) {
+                    allObj[idx].rate = prod.rate.toString();
+                    allObj[idx]['item_amount'] = String(Number(allObj[idx]['rate']) * Number(allObj[idx]['pcs']))
+                }
+                else if (clearVal) {
+                    allObj[idx].rate = ''
+                    allObj[idx].item_amount = ''
                 }
             })
         })
@@ -271,7 +282,8 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
     const handleDescription = (e, index) => {
         let allObj = [...billItems];
         allObj[index]['description'] = e ? e : '';
-        e?.length > 0 ? AutoFillRate(index) : AutoFillRate(index,true);
+        allObj[index]['description'].length > 0 ? AutoFillRateField(allObj, index) : AutoFillRateField(allObj, index, true);
+        setBillItems(allObj)
     }
 
     const handleDiscount = (e) => {
@@ -289,26 +301,9 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
     const handleTds = (e) => {
         setTds(Math.abs(e.target.value))
     }
-    const getTotalAmount = () => {
-        let total = billSubTotalAmount
-            - ((billSubTotalAmount * (discount)) / 100)
-            - ((billSubTotalAmount * (tds)) / 100)
-            + ((billSubTotalAmount * (gst)) / 100)
-            + ((billSubTotalAmount * (sgst)) / 100)
-            + ((billSubTotalAmount * (cgst)) / 100)
-        setBillTotalAmount(total)
-        return total
-    }
 
-    const removeItem = (id) => {
-        if (id == 0 && billItems[id].item_amount == 0) {
-            alert("Can't Remove first item")
-        }
-        else {
-            const remainedItems = billItems.slice().filter((item, index) => id !== index)
-            setBillItems(remainedItems)
-            getTotalAmount()
-        }
+    let viewPdf = () => {
+        console.log("View PDF");
     }
 
     return (
@@ -333,7 +328,6 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
                         </TableHead>
                         <TableBody>
                             {billItems
-                                //   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((bill, id) => {
                                     return (
                                         <TableRow hover role="checkbox" tabIndex={-1} key={id}>
@@ -344,10 +338,9 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
                                                         {item != 'description' && item != 'item_amount' ?
                                                             item != 'description' && <TextField
                                                                 required
-                                                                // defaultValue={value}
-                                                                value={value}
                                                                 name={item}
                                                                 onChange={(e) => { handleChange(e, id) }}
+                                                                value={value}
                                                                 placeholder={item}
                                                                 size='small'
                                                                 variant="outlined"
@@ -368,6 +361,7 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
                                                                 <SelectCompo
                                                                     handleChange={handleDescription}
                                                                     id={id}
+                                                                    ipArray={productsList}
                                                                 />
                                                             </React.Fragment>
                                                         }
@@ -401,7 +395,7 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
             </Paper >
             <div className='mt-7 flex justify-center'>
                 <div className='container grid md:grid-cols-3 gap-4 xs:grid-rows-1 mb-10'>
-                    <Button className='m-5 w-100' color="secondary" variant="outlined" startIcon={<VisibilityIcon />}>
+                    <Button className='m-5 w-100' color="secondary" onClick={viewPdf} variant="outlined" startIcon={<VisibilityIcon />}>
                         View Mode
                     </Button>
                     <Button variant="outlined" color="error" onClick={cancleInvoice} startIcon={<CloseSharpIcon />}>

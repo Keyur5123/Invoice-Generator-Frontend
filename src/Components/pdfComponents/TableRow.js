@@ -1,37 +1,32 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Text, View, StyleSheet } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
-    row: {
-        width: "100%",
-        textAlign: "center",
-        display: "flex",
-        flexDirection: "row",
-    },
     TableRowRoot: {
         borderBottom: "1px solid blue",
         borderLeft: "1px solid blue",
         borderRight: "1px solid blue",
-        height: "55%"
-    },
-    TableRowHeader: {
-        display: "flex",
-        flexDirection: "row",
-        borderBottom: "1px solid blue",
-    },
-    TableRowBody: {
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between"
+        height: "50%"
     },
     TablePan: {
-        paddingLeft: "170px",
+        paddingLeft: "26%",
         paddingBottom: "2px"
     },
-    panNO: {
-        fontSize: "14px",
+    GstNo: {
+        fontSize: "12px",
         fontWeight: "bold"
+    },
+    TableFooter: {
+        display: 'flex',
+        flexDirection: 'row'
+    },
+    Tabletotal: {
+        paddingLeft: "24%",
+        paddingBottom: "2px"
+    },
+    TabletotalAmount: {
+        paddingLeft: "4%",
+        paddingBottom: "2px"
     }
 });
 
@@ -43,7 +38,7 @@ let TableRow = ({ items }) => {
             width: "10%",
         },
         {
-            partyChNo: "",
+            PartyChNo: "",
             width: "15%",
         },
         {
@@ -51,7 +46,7 @@ let TableRow = ({ items }) => {
             width: "30%",
         },
         {
-            PCS: "",
+            Pcs: "",
             width: "10%",
         },
         {
@@ -67,43 +62,96 @@ let TableRow = ({ items }) => {
             width: "15%",
         },
     ])
+    const [totalAmountBeforeDiscount, setTotalAmountBeforeDiscount] = useState(0);
+
+    useEffect(() => {
+        let total;
+        if (items) {
+            total = items.reduce((sum, i) => sum + i.item_amount, 0)
+        }
+        setTotalAmountBeforeDiscount(total)
+    }, [items])
 
     let headers = tableHeaders.map((item, index) => (
         <View
             style={
                 index == 6 ?
-                    { width: `${item.width}`, textAlign: "center", padding: "10px 0px" }
+                    { display: 'flex', flexDirection: 'column', width: `${item.width}`, textAlign: "center", padding: "10px 0px" }
                     :
-                    { width: `${item.width}`, textAlign: "center", borderRight: '1px solide blue', padding: "10px 0px" }
+                    { display: 'flex', flexDirection: 'column', width: `${item.width}`, textAlign: "center", borderRight: '1px solide blue', padding: "10px 0px" }
             }
             key={index}
         >
             <Text>{Object.keys(item)[0]}</Text>
         </View>
-    ))
-
-    let rows = items.map((item, index) => (
-        <View style={styles.row} key={index}>
-            <Text style={{ width: `${tableHeaders[0].width}`, padding: "10px 0px" }}> {index + 1} </Text>
-            <Text style={{ width: `${tableHeaders[1].width}`, padding: "10px 0px" }}> {item.partyChNo} </Text>
-            <Text style={{ width: `${tableHeaders[2].width}`, padding: "10px 0px" }}>{item.products[0].name}</Text>
-            <Text style={{ width: `${tableHeaders[3].width}`, padding: "10px 0px" }}>{item.pcs}</Text>
-            <Text style={{ width: `${tableHeaders[4].width}`, padding: "10px 0px" }}>{item.mtr}</Text>
-            <Text style={{ width: `${tableHeaders[5].width}`, padding: "10px 0px" }}>{item.products[0].rate}</Text>
-            <Text style={{ width: `${tableHeaders[6].width}`, padding: "10px 0px" }}>{item.item_amount}</Text>
-        </View>
     ));
+
     return (
         <View style={styles.TableRowRoot}>
-            <View style={styles.TableRowHeader}>
+            <View style={{ display: 'flex', flexDirection: 'row', borderBottom: '1px solid blue' }}>
                 {headers}
             </View>
-            <View style={styles.TableRowBody}>
-                <View>
-                    {rows}
+            <View style={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
+                <View style={{ display: 'flex', flexDirection: 'column', borderRight: '1px solid blue', width: tableHeaders[0].width }}>
+                    {items.map((item, index) => (
+                        <View style={{ padding: '10px 0px', textAlign: 'center' }}>
+                            <Text key={index}>{index + 1}</Text>
+                        </View>
+                    ))}
                 </View>
+                <View style={{ display: 'flex', flexDirection: 'column', borderRight: '1px solid blue', width: tableHeaders[1].width }}>
+                    {items.map((item, index) => (
+                        <View style={{ padding: '10px 0px', textAlign: 'center' }}>
+                            <Text key={index}>{item.partyChNo}</Text>
+                        </View>
+                    ))}
+                </View>
+                <View style={{ display: 'flex', flexDirection: 'column', borderRight: '1px solid blue', width: tableHeaders[2].width }}>
+                    {items.map((item, index) => (
+                        <View style={{ padding: '10px 0px', textAlign: 'center' }}>
+                            <Text key={index}>{item.products[0].name}</Text>
+                        </View>
+                    ))}
+                </View>
+                <View style={{ display: 'flex', flexDirection: 'column', borderRight: '1px solid blue', width: tableHeaders[3].width }}>
+                    {items.map((item, index) => (
+                        <View style={{ padding: '10px 0px', textAlign: 'center' }}>
+                            <Text key={index}>{item.pcs}</Text>
+                        </View>
+                    ))}
+                </View>
+                <View style={{ display: 'flex', flexDirection: 'column', borderRight: '1px solid blue', width: tableHeaders[4].width }}>
+                    {items.map((item, index) => (
+                        <View style={{ padding: '10px 0px', textAlign: 'center' }}>
+                            <Text key={index}>{item.mtr}</Text>
+                        </View>
+                    ))}
+                </View>
+                <View style={{ display: 'flex', flexDirection: 'column', borderRight: '1px solid blue', width: tableHeaders[5].width }}>
+                    {items.map((item, index) => (
+                        <View style={{ padding: '10px 0px', textAlign: 'center' }}>
+                            <Text key={index}>{item.products[0].rate}</Text>
+                        </View>
+                    ))}
+                </View>
+                <View style={{ display: 'flex', flexDirection: 'column', width: tableHeaders[6].width }}>
+                    {items.map((item, index) => (
+                        <View style={{ padding: '10px 0px', textAlign: 'center' }}>
+                            <Text key={index}>{item.item_amount}</Text>
+                        </ View>
+                    ))}
+                </View>
+            </View>
+
+            <View style={styles.TableFooter}>
                 <View style={styles.TablePan}>
-                    <Text style={styles.panNO}>Pan no. A0MPP6852K</Text>
+                    <Text style={styles.GstNo}>GSTIN 24A0MPP6852K1ZC</Text>
+                </View>
+                <View style={styles.Tabletotal}>
+                    <Text style={styles.GstNo}>Total :- </Text>
+                </View>
+                <View style={styles.TabletotalAmount}>
+                    <Text style={styles.GstNo}>{totalAmountBeforeDiscount}</Text>
                 </View>
             </View>
         </View>);
