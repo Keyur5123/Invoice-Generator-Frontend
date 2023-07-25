@@ -19,6 +19,8 @@ import { useInvoiceContext } from "../../../Context/InvoiceContext";
 import Constants from "../../../Utilities/Constants/responseConstants";
 import SelectCompo from "../../../Components/SelectDropDown";
 
+import { updatedProducts, upsertProducts } from "../../../ApiController/ProductsAndPartyApis";
+
 const tableHeader = [
     {
         id: '1',
@@ -74,7 +76,8 @@ const tableHeader = [
 
 export default function BillItems({ billHeaders, setBillHeaders, formatedDate, validate, snackbar, setSnackbar }) {
     const navigate = useNavigate();
-    const { dispatch, state, userData } = useInvoiceContext();
+    const { dispatch, state, userData, token, getAllPartyNameAndProductsList } = useInvoiceContext();
+    let userId = userData.userId;
     let { productsList } = state;
 
     const [billItems, setBillItems] = useState([
@@ -120,15 +123,15 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
         return total
     }
 
-    const sendDataToServer = async (fieldObj) => {
+    const sendDataToServer = async (obj) => {
         await fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/save/newInvoice/${userData.userId}/v1`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ fieldObj })
+            body: JSON.stringify({ obj })
         })
             .then(data => data.json())
             .then(data => {
-                dispatch({ type: 'ADD_NEW_INVOICE', payload: fieldObj })
+                dispatch({ type: 'ADD_NEW_INVOICE', payload: obj })
                 setSnackbar({ ...snackbar, status: true, message: 'Invoice saved successfully', severity: Constants.SUCCESS })
                 // ==== Cleaning States ==== //
                 setBillItems([
@@ -170,14 +173,28 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
             })
         })
         if (updatedProducts.length > 0) {
-            // CALL API FOR CHANGE PRICE OF PRODUCTS
-            console.log("updatedProducts :- ", updatedProducts);
+            upsertProducts(updatedProducts, userId, token, true)
+                .then(data => {
+                    if (data?.status == 401) {
+                        setSnackbar({ ...snackbar, status: true, message: 'User unauthorized', severity: Constants.ERROR });
+                    }
+                    else if (data?.err) {
+                        setSnackbar({ ...snackbar, status: true, message: data?.err?.err, severity: Constants.ERROR });
+                    }
+                    else {
+                        getAllPartyNameAndProductsList();
+                        setSnackbar({ ...snackbar, status: true, message: data?.data?.msg, severity: Constants.SUCCESS });
+                    }
+                })
+                .catch(error => {
+                    setSnackbar({ ...snackbar, status: true, message: error.toString(), severity: Constants.ERROR });
+                });
         }
     }
 
     const saveInvoice = () => {
         if (validate() == true) {
-            var fieldObj = {
+            var obj = {
                 party_name: billHeaders.partyName,
                 address: billHeaders.address,
                 bill_no: billHeaders.billNo,
@@ -191,11 +208,11 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
             }
 
             dispatch({ type: 'SET_LOADING' })
-            sendDataToServer(fieldObj);
+            sendDataToServer(obj);
             checkAndUpdateProductPrice();
         }
         else {
-            // checkIsValueChage(); // Remove it.....................................................................
+            checkAndUpdateProductPrice(); // Remove it.....................................................................
             setSnackbar({ ...snackbar, status: true, message: "All fields are required", severity: Constants.ERROR });
         }
     }

@@ -139,12 +139,12 @@ function Index({ invoiceList, setTotalPcs }) {
     }, [invoiceList])
 
     return (
-        <div className="App">
+        <div className="App flex justify-items-center">
             <Grid sx={{ marginTop: "0px" }} container spacing={3}>
-                <Grid item xs={12} sm={12} xl={6}>
+                <Grid item xs={12} sm={6} lg={6}>
                     <PieChart chartData={chartData} />
                 </Grid>
-                <Grid item xs={12} sm={12} xl={6}>
+                <Grid item xs={12} sm={6} lg={6}>
                     <BarChart chartData={chartData} />
                 </Grid>
             </Grid>

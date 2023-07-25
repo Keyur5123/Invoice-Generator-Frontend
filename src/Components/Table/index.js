@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, Button, Box, Collapse, IconButton, Typography } from '@mui/material';
 
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -6,9 +6,6 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Link } from 'react-router-dom';
-import DownloadPdf from '../../Screens/DownloadPdf';
-import { PDFDownloadLink } from '@react-pdf/renderer'
-import GeneratePdf from '../pdfComponents/GeneratePdf'
 
 function Row(props) {
     const { isExtractable, row } = props;
@@ -27,7 +24,7 @@ function Row(props) {
                 </TableCell>}
                 <TableCell component="th" align="center" scope="row">{row._id.bill_no}</TableCell>
                 <TableCell align="center">{row._id.party_name}</TableCell>
-                <TableCell align="center">"row._id.date_created.split('T')[0]"</TableCell>
+                <TableCell align="center">{row._id.date_created.split('T')[0]}</TableCell>
                 <TableCell align="center">{row._id.gst}</TableCell>
                 <TableCell align="center">{row._id.sgst}</TableCell>
                 <TableCell align="center">{row._id.billTotalAmount}</TableCell>
@@ -101,8 +98,8 @@ function TableComponent({ isExtractable, invoiceList, isPaginationAllowed }) {
     };
 
     return (
-        <div className='mt-4 '>
-            <Box sx={{ width: '100%' }}>
+        <div className='mt-4 w-full max-[500px]:w-[365px]'>
+            <Box>
                 <Paper sx={{ mb: 2 }}>
                     <TableContainer>
                         <Table aria-label="collapsible table">
@@ -127,8 +124,8 @@ function TableComponent({ isExtractable, invoiceList, isPaginationAllowed }) {
                             </TableHead>
                             <TableBody>
                                 {invoiceList && invoiceList.length > 0 && invoiceList?.reverse().slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    .map((row) => (
-                                        <Row key={row._id} row={row} isExtractable={isExtractable} />
+                                    .map((row,index) => (
+                                        <Row key={index} row={row} isExtractable={isExtractable} />
                                     ))
                                 }
                             </TableBody>

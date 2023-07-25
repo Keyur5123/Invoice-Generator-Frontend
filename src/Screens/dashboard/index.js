@@ -108,26 +108,17 @@ function Dashboard() {
                     </Grid>
                 </Grid>
 
-                <Charts invoiceList={invoiceList} setTotalPcs={setTotalPcs} />
+                <div className='mb-7'>
+                    <Charts invoiceList={invoiceList} setTotalPcs={setTotalPcs} />
+                </div>
 
-                <Box>
-                    <Grid sx={{ marginTop: "0px" }} container spacing={3}>
-                        <Grid item xs={12} sm={8} xl={9}>
-                            <Table
-                                isExtractable={false}
-                                invoiceList={invoiceList}
-                                isPaginationAllowed={false}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={8} xl={3}>
-                            <Table
-                                isExtractable={false}
-                                invoiceList={invoiceList}
-                                isPaginationAllowed={false}
-                            />
-                        </Grid>
-                    </Grid>
-                </Box>
+                <>
+                    <Table
+                        isExtractable={false}
+                        invoiceList={invoiceList}
+                        isPaginationAllowed={true}
+                    />
+                </>
             </motion.div>
         </Sidebar >
     )

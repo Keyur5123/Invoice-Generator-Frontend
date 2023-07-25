@@ -3,11 +3,13 @@ import Constants from "../../Utilities/Constants/responseConstants";
 import { Button } from '@mui/material';
 import TextFieldControl from "../../Controls/TextFieldControl";
 import Snackbar from '../../Components/Snackbar';
-import { useInvoiceContext } from "../../Context/InvoiceContext"
+import { useInvoiceContext } from "../../Context/InvoiceContext";
+import { upsertProducts } from "../../ApiController/ProductsAndPartyApis";
 
 function AddProductAndParty() {
 
     const { userData, token, getAllPartyNameAndProductsList } = useInvoiceContext();
+    let userId = userData.userId;
 
     const [productDetails, setProductDetails] = useState({
         name: '',
@@ -47,12 +49,7 @@ function AddProductAndParty() {
 
     let handleProductSubmit = async () => {
         if (ProductValidator() == true) {
-            await fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/product-and-party/save/add-new-product/${userData.userId}/v1`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', Authentication: 'Bearer ' + token },
-                body: JSON.stringify({ name: productDetails.name, rate: productDetails.rate })
-            })
-                .then(res => res.json())
+            upsertProducts(productDetails, userId, token)
                 .then(data => {
                     if (data?.status == 401) {
                         setSnackbar({ ...snackbar, status: true, message: 'User unauthorized', severity: Constants.ERROR });
@@ -67,7 +64,7 @@ function AddProductAndParty() {
                 })
                 .catch(error => {
                     setSnackbar({ ...snackbar, status: true, message: error.toString(), severity: Constants.ERROR });
-                })
+                });
         }
         else {
             setSnackbar({ ...snackbar, status: true, message: Constants.ALL_FIELD_REQUIRED, severity: Constants.ERROR });
