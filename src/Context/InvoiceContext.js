@@ -54,7 +54,7 @@ const AppProvider = ({ children }) => {
         }
     }
 
-    let getAllPartyNameAndProductsList = async () => {
+    async function getAllPartyNameAndProductsList () {
         dispatch({ type: 'SET_LOADING' })
         try {
             await fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/product-and-party/check/all-products-and-partyFerms/${userData.userId}/v1`, {

@@ -11,8 +11,8 @@ export default function CenteredTabs({ currTab, setCurrTab }) {
   };
 
   return (
-    <Box sx={{ width: '100%', bgcolor: 'background.paper', marginBottom: '20px' }}>
-      <Tabs value={currTab} onChange={handleChange} centered>
+    <Box sx={{ width: '100%', bgcolor: 'background.paper', marginBottom: '20px', display: 'flex', justifyContent: 'center ' }}>
+      <Tabs value={currTab} onChange={handleChange} variant="scrollable" centered>
         <Tab label="Add Items" />
         <Tab label="View Products" />
         <Tab label="View Party" />

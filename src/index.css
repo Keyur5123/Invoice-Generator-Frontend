@@ -27,10 +27,13 @@ code {
   color: #51668f;
 }
 
-.rs-picker-default .rs-picker-toggle.rs-btn , .rs-picker-has-value.rs-picker-cleanable .rs-picker-toggle.rs-btn, .rs-picker-toggle-wrapper .rs-picker-toggle.rs-btn{
+.rs-picker-default .rs-picker-toggle.rs-btn,
+.rs-picker-has-value.rs-picker-cleanable .rs-picker-toggle.rs-btn,
+.rs-picker-toggle-wrapper .rs-picker-toggle.rs-btn {
   padding-bottom: 9px !important;
   padding-top: 10px !important;
   background-color: transparent !important;
   border-style: solid !important;
   border-color: rgb(178, 177, 177) !important;
 }
+
