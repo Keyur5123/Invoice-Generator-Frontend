@@ -23,7 +23,7 @@ export default function InvoicesList() {
     localStorage.removeItem('userData');
     navigate('/login');
   }
-  
+
   return (
     <Sidebar>
       <div>
@@ -49,15 +49,15 @@ export default function InvoicesList() {
           </div>
         </div>
 
-          <Grid sx={{ marginTop: "0px" }} container spacing={3}>
-            <Grid item xs={12}>
-              <Table
-                isExtractable={true}
-                invoiceList={invoiceList}
-                isPaginationAllowed={true}
-              />
-            </Grid>
+        <Grid sx={{ marginTop: "0px" }} container spacing={3}>
+          <Grid item xs={12}>
+            <Table
+              isExtractable={true}
+              invoiceList={invoiceList}
+              isPaginationAllowed={true}
+            />
           </Grid>
+        </Grid>
       </>
     </Sidebar>
 

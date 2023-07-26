@@ -22,14 +22,14 @@ function Row(props) {
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>}
-                <TableCell component="th" align="center" scope="row">{row._id.bill_no}</TableCell>
-                <TableCell align="center">{row._id.party_name}</TableCell>
-                <TableCell align="center">{row._id.date_created.split('T')[0]}</TableCell>
-                <TableCell align="center">{row._id.gst}</TableCell>
-                <TableCell align="center">{row._id.sgst}</TableCell>
-                <TableCell align="center">{row._id.billTotalAmount}</TableCell>
+                <TableCell component="th" align="center" scope="row">{row?._id?.bill_no}</TableCell>
+                <TableCell align="center">{row?._id?.party_name}</TableCell>
+                <TableCell align="center">{row?._id?.date_created.split('T')[0]}</TableCell>
+                <TableCell align="center">{row?._id?.gst}</TableCell>
+                <TableCell align="center">{row?._id?.sgst}</TableCell>
+                <TableCell align="center">{row?._id?.billTotalAmount}</TableCell>
                 <TableCell align="center">
-                    <Link to={`/generate-invoice-pdf/${row._id._id}`}>
+                    <Link to={`/generate-invoice-pdf/${row?._id?._id}`}>
                         <Button variant="outlined" color="info" startIcon={<VisibilityIcon />}>
                             View PDF
                         </Button>
@@ -60,7 +60,7 @@ function Row(props) {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {row.billItems.map((historyRow) => (
+                                    {row && row.billItems?.map((historyRow) => (
                                         <TableRow key={historyRow._id}>
                                             <TableCell align="center">{historyRow.partyChNo}</TableCell>
                                             <TableCell align="center" component="th" scope="row">
@@ -87,6 +87,12 @@ function TableComponent({ isExtractable, invoiceList, isPaginationAllowed }) {
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+
+    let shortedData = invoiceList?.sort(function(a, b){
+        var aa = a._id.date_created.split('-').reverse().join(),
+            bb = b._id.date_created.split('-').reverse().join();
+        return aa < bb ? -1 : (aa > bb ? 1 : 0);
+    });
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -123,7 +129,7 @@ function TableComponent({ isExtractable, invoiceList, isPaginationAllowed }) {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {invoiceList && invoiceList.length > 0 && invoiceList?.reverse().slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                {invoiceList && shortedData.length > 0 && shortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row,index) => (
                                         <Row key={index} row={row} isExtractable={isExtractable} />
                                     ))

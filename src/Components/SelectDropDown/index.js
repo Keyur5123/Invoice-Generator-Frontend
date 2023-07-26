@@ -4,7 +4,7 @@ import { SelectPicker } from 'rsuite';
 const Index = ({ handleChange, id, ipArray }) => {
 
   const data = ipArray?.map(
-    item => ({ label: item?.name, value: item?._id })
+    item => ({ label: item?.name, value: item?.name })
   );
 
   return (

@@ -87,6 +87,7 @@ export default function Home() {
             </div>
             <div className='flex items-center mt-5 justify-between min-w-[50%]'>
               <h6 className='mr-5'>Address</h6>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <TextFieldControl
                 size='small'
                 label="Address"
@@ -101,6 +102,7 @@ export default function Home() {
           <div className='flex flex-col items-center justify-between'>
             <div className='flex items-center mt-5 justify-between min-w-[50%]'>
               <h6 className='mr-5'>Bill No.</h6>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <TextFieldControl
                 size='small'
                 label="Bill No."
@@ -112,6 +114,7 @@ export default function Home() {
             </div>
             <div className='flex items-center mt-5 justify-between min-w-[50%]'>
               <h6 className='mr-5'>Date</h6>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <TextFieldControl
                 size='small'
                 label={billHeaders.date}

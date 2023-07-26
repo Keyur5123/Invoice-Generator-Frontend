@@ -51,10 +51,45 @@ function InvoiceReducer(state, action) {
 
 
         case 'ADD_NEW_INVOICE':
+            let tempArr = [...state?.invoiceList];
+            let tempObj = {};
+            let tempModifiedArr = [];
+
+            tempObj._id = {
+                "party_name": action.payload.party_name,
+                "address": action.payload.address,
+                "bill_no": action.payload.bill_no,
+                "discount": action.payload.discount,
+                "gst": action.payload.gst,
+                "sgst": action.payload.sgst,
+                "cgst": action.payload.cgst,
+                "tds": action.payload.tds,
+                "billTotalAmount": action.payload.billTotalAmount,
+                "date_created": action.payload.date_created
+            }
+
+            action.payload.billItems.map(item => {
+                let modifiedObj = {
+                    "partyChNo": item.partyChNo,
+                    "pcs": item.pcs,
+                    "mtr": item.mtr,
+                    "item_amount": item.item_amount,
+                    "products": [
+                        {
+                            "name": item.description,
+                            "rate": item.rate,
+                        }
+                    ]
+                }
+                tempModifiedArr.push(modifiedObj)
+            })
+            
+            tempObj.billItems = tempModifiedArr
+            tempArr.push(tempObj)
             return {
                 ...state,
                 isLoading: false,
-                invoiceList: action.payload
+                invoiceList: tempArr
             }
 
         default:

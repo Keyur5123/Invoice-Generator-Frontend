@@ -90,7 +90,7 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
             item_amount: ''
         }
     ]);
-
+    
     const [billSubTotalAmount, setBillSubTotalAmount] = useState(0);
     const [discount, setDiscount] = useState(0);
     const [gst, setGst] = useState(0);
@@ -198,6 +198,7 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
                 party_name: billHeaders.partyName,
                 address: billHeaders.address,
                 bill_no: billHeaders.billNo,
+                date_created: billHeaders.date,
                 billItems: billItems,
                 discount: discount,
                 gst: gst,
@@ -212,7 +213,6 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
             checkAndUpdateProductPrice();
         }
         else {
-            checkAndUpdateProductPrice(); // Remove it.....................................................................
             setSnackbar({ ...snackbar, status: true, message: "All fields are required", severity: Constants.ERROR });
         }
     }
@@ -284,7 +284,7 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
     const AutoFillRateField = (allObj, idx, clearVal = false) => {
         billItems.map(item => {
             productsList.map(prod => {
-                if (item.description == prod._id) {
+                if (item.description == prod.name) {
                     allObj[idx].rate = prod.rate.toString();
                     allObj[idx]['item_amount'] = String(Number(allObj[idx]['rate']) * Number(allObj[idx]['pcs']))
                 }
@@ -324,8 +324,8 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
     }
 
     return (
-        <>
-            <Paper sx={{ width: '100%' }} className='mt-5'>
+        <div className='mt-5 w-full max-[500px]:w-[365px]'>
+            <Paper className=''>
                 {/* // , maxWidth : 300,, minHeight: 200 */}
                 <TableContainer sx={{ maxHeight: 440 }}>
                     <Table stickyHeader aria-label="sticky table">
@@ -423,6 +423,6 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
                     </Button>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
