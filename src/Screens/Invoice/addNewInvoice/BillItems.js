@@ -90,7 +90,7 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
             item_amount: ''
         }
     ]);
-    
+
     const [billSubTotalAmount, setBillSubTotalAmount] = useState(0);
     const [discount, setDiscount] = useState(0);
     const [gst, setGst] = useState(0);

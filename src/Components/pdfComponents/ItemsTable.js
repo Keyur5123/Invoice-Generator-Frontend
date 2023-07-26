@@ -23,7 +23,7 @@ const ItemsTable = ({ invoiceList }) => {
   subHeaderData.partyChNo = invoiceList.billItems.map((item) => {
     return item.partyChNo
   });
-  console.log("invoiceList >>>>>>>>>>>>>>> ",invoiceList);
+
   return (
     <View style={styles.tableContainer} >
       <TableHeader subHeaderData={subHeaderData} />
