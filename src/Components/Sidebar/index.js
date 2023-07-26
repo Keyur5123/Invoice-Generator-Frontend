@@ -204,8 +204,15 @@ export default function PersistentDrawerLeft({ children }) {
             </Drawer>
             <Main open={open}>
                 <DrawerHeader />
-                <div className='main-body'>
-                    {children}
+                <div className='flex flex-col justify-between'>
+                    <div className='main-body min-h-[80vh]'>
+                        {children}
+                    </div>
+                    <div class="bg-[#51668f] relative h-16 mb-5 mt-10 rounded">
+                        <div class="absolute inset-x-0 bottom-0 h-16 flex items-center justify-center text-white">
+                            <h6>Copyright © 2023 Darshan Creation. All rights reserved.</h6>
+                        </div>
+                    </div>
                 </div>
             </Main>
         </Box >

@@ -21,7 +21,7 @@ function Dashboard() {
     const [totalAmount, setTotalAmount] = useState(0);
 
     useEffect(() => {
-        let amount = invoiceList.reduce((prev, next) => prev + next._id.billTotalAmount, 0);
+        let amount = invoiceList?.reduce((prev, next) => prev + next._id.billTotalAmount, 0);
         setTotalAmount(amount)
     }, [invoiceList]);
 
@@ -111,7 +111,7 @@ function Dashboard() {
                 <div className='mb-7'>
                     <Charts invoiceList={invoiceList} setTotalPcs={setTotalPcs} />
                 </div>
-
+                                
                 <>
                     <Table
                         isExtractable={false}

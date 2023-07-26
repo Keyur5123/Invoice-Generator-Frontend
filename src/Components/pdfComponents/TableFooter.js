@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     TaxName : {
         display: 'flex',
         flexDirection: "row",
-        justifyContent : "space-between",
+        // justifyContent : "space-between",      // this will place number at the end of _____ (looks ocward)...
         width: "100%",
         borderBottom: "1px solid blue",
     },
@@ -54,6 +54,12 @@ const styles = StyleSheet.create({
 });
 
 function TableFooter({ discount, gst, sgst, cgst, tds, billTotalAmount }) {
+    console.log("discount : - ",discount);
+    console.log("gst : - ",gst);
+    console.log("sgst : - ",sgst);
+    console.log("cgst : - ",cgst);
+    console.log("tds : - ",tds);
+    console.log("billTotalAmount : - ",billTotalAmount);
     return (
         <View style={styles.TableFooter}>
             <View style={styles.TableFooterItem}>
@@ -63,27 +69,28 @@ function TableFooter({ discount, gst, sgst, cgst, tds, billTotalAmount }) {
                 <View style={styles.Taxs}>
                     <View style={styles.TaxName}>
                         <Text style={{ paddingLeft : "5px"}}>Disc. %</Text>
-                        <Text style={{ paddingRight: "10px" }}>{discount}</Text>
+                        <Text style={{ paddingLeft: "23px" }}>{discount}</Text>   
+                        {/* // paddingRight: "10px" in case of justify-between */}
                     </View>
                     <View style={styles.TaxName}>
                         <Text style={{ paddingLeft : "5px"}}>Gst %</Text>
-                        <Text style={{ paddingRight: "10px" }}>{gst}</Text>
+                        <Text style={{ paddingLeft: "30px" }}>{gst}</Text>
                     </View>
                     <View style={styles.TaxName}>
                         <Text style={{ paddingLeft : "5px"}}>Sgst %</Text>
-                        <Text style={{ paddingRight: "10px" }}>{sgst}</Text>
+                        <Text style={{ paddingLeft: "27px" }}>{sgst}</Text>
                     </View>
                     <View style={styles.TaxName}>
                         <Text style={{ paddingLeft : "5px"}}>Cgst %</Text>
-                        <Text style={{ paddingRight: "10px" }}>{cgst}</Text>
+                        <Text style={{ paddingLeft: "27px" }}>{cgst}</Text>
                     </View>
                     <View style={styles.TaxName}>
                         <Text style={{ paddingLeft : "5px"}}>Tds %</Text>
-                        <Text style={{ paddingRight: "10px" }}>{tds}</Text>
+                        <Text style={{ paddingLeft: "31px" }}>{tds}</Text>
                     </View>
                     <View style={styles.TaxName}>
                         <Text style={{ paddingLeft : "5px"}}>Total</Text>
-                        <Text style={{ paddingRight: "10px" }}>{billTotalAmount}</Text>
+                        <Text style={{ paddingLeft: "39px" }}>{billTotalAmount}</Text>
                     </View>
                 </View>
             </View>

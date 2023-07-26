@@ -29,12 +29,12 @@ const ItemsTable = ({ invoiceList }) => {
       <TableHeader subHeaderData={subHeaderData} />
       <TableRow items={invoiceList.billItems} />
       <TableFooter
-        discount={invoiceList.discount}
-        gst={invoiceList.gst}
-        sgst={invoiceList.sgst}
-        cgst={invoiceList.cgst}
-        tds={invoiceList.tds}
-        billTotalAmount={invoiceList.billTotalAmount}
+        discount={invoiceList._id.discount}
+        gst={invoiceList._id.gst}
+        sgst={invoiceList._id.sgst}
+        cgst={invoiceList._id.cgst}
+        tds={invoiceList._id.tds}
+        billTotalAmount={invoiceList._id.billTotalAmount}
       />
     </View >
   )
