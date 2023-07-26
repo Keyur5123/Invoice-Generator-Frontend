@@ -53,8 +53,6 @@ function Index({ invoiceList, setTotalPcs }) {
     function arrangePieChartData() {
         let array = [];
         invoiceList.forEach(element => {
-            console.log("element._id.date_created :- ",element._id.date_created);
-            console.log("element._id.date_created.split('-').reverse()[0] :- ",element._id.date_created.split('-').reverse()[0]);
             var obj = {};
             obj.year = Number(element._id.date_created.split('-').reverse()[0])
             obj.pcs = element.billItems.reduce((prev, next) => (
