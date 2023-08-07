@@ -10,6 +10,7 @@ import SignUp from "../Screens/authentication/SignUp";
 import { AnimatePresence } from "framer-motion";
 import ProtectedRoute from './ProtectedRoute';
 import NotFoundPage from "../Screens/NotFoundPage";
+import ManageUsers from "../Screens/ManageUser";
 
 function AnimatedRoutes() {
     const location = useLocation();
@@ -27,6 +28,7 @@ function AnimatedRoutes() {
                         <Route path="/generate-invoice-pdf/:invoice_id" element={<ProtectedRoute token={token} Component={GeneratePdf} />} />
                         <Route path="/invoice-list" element={<ProtectedRoute token={token} Component={InvoicesList} />} />
                         <Route path="/manage-product-and-party" element={<ProtectedRoute token={token} Component={ProductAndParty} />} />
+                        <Route path="/manage-users" element={<ProtectedRoute token={token} Component={ManageUsers} />} />
                         <Route path="/not-found" element={<NotFoundPage />} />
                         <Route path="*" element={<NotFoundPage />} />
                     </React.Fragment>

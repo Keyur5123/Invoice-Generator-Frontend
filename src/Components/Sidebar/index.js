@@ -20,6 +20,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import DescriptionIcon from '@mui/icons-material/Description';
 import CategoryIcon from '@mui/icons-material/Category';
 import InfoIcon from '@mui/icons-material/Info';
+import GroupIcon from '@mui/icons-material/Group';
 import { Link } from 'react-router-dom';
 import { Avatar, Button, Container, Divider } from '@mui/material';
 import logo from '../../assets/images/logos/logo.png';
@@ -80,6 +81,8 @@ export default function PersistentDrawerLeft({ children }) {
 
     const navigate = useNavigate();
     const { userData } = useInvoiceContext();
+    let userId = userData.roleId
+
     const [open, setOpen] = React.useState(false);
 
     const handleDrawerOpen = () => {
@@ -174,12 +177,22 @@ export default function PersistentDrawerLeft({ children }) {
                                     </ListItemButton>
                                 </ListItem>
                             </Link>
+                            {userId == '1' && <Link to="/manage-users" className='no-underline text-white hover:text-white hover:no-underline'>
+                                <ListItem disablePadding>
+                                    <ListItemButton>
+                                        <ListItemIcon sx={{ color: 'sidebar.text.primary' }}>
+                                            <GroupIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary='Manage Users' />
+                                    </ListItemButton>
+                                </ListItem>
+                            </Link>}
                             <ListItem disablePadding>
                                 <ListItemButton>
                                     <ListItemIcon sx={{ color: 'sidebar.text.primary' }}>
                                         <InfoIcon />
                                     </ListItemIcon>
-                                    <ListItemText primary='Abount Me' />
+                                    <ListItemText primary='Abount Us' />
                                 </ListItemButton>
                             </ListItem>
                         </List>
@@ -210,7 +223,7 @@ export default function PersistentDrawerLeft({ children }) {
                     </div>
                     <div class="bg-[#51668f] relative h-16 mb-5 mt-10 rounded">
                         <div class="absolute inset-x-0 bottom-0 h-16 flex items-center justify-center text-white">
-                            <h6>Copyright © 2023 Darshan Creation. All rights reserved.</h6>
+                            <h6 className='max-[500px]:text-xs'>Copyright © 2023 Darshan Creation. All rights reserved.</h6>
                         </div>
                     </div>
                 </div>

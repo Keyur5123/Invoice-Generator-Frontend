@@ -1,32 +1,7 @@
-/**
-=========================================================
-* Soft UI Dashboard React - v3.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-// react-router-dom components
 import { Link } from "react-router-dom";
-
-// @mui material components
 import { Box, Button, Input, Typography, Switch } from "@mui/material";
-
-// Soft UI Dashboard React components
-// import SuiBox from "components/SuiBox";
-// import Typography from "components/Typography";
-// import Input from "components/Input";
-// import Button from "components/Button";
 
 // Authentication layout components
 import CoverLayout from "../Components/CoverLayout";
@@ -36,16 +11,15 @@ import curved9 from "../../../assets/images/curved-images/curved-6.jpg";
 
 import Constants from "../../../Utilities/Constants/responseConstants"
 import TextFieldControl from "../../../Controls/TextFieldControl";
-
 import Snackbar from '../../../Components/Snackbar';
 import { useInvoiceContext } from "../../../Context/InvoiceContext";
+import Loader from  "../../../Components/Loader";
 
 function SignIn() {
 
   const navigate = useNavigate();
-  const { isLoading, state, dispatch, contextSnackbar, setContextSnackbar } = useInvoiceContext();
+  const { contextSnackbar, setContextSnackbar } = useInvoiceContext();
 
-  const [rememberMe, setRememberMe] = useState(true);
   const [addUser, setAddUser] = useState({
     email: '',
     password: '',
@@ -53,6 +27,11 @@ function SignIn() {
   });
 
   const [addUserError, setAddUserError] = useState({})
+  const [isLoading, setIsLoading] = useState(false);
+
+  if(isLoading){
+    return <Loader />;
+  }
 
   const handleSetRememberMe = () => setAddUser({ ...addUser, ['rememberMe']: !addUser.rememberMe });
 
@@ -73,6 +52,7 @@ function SignIn() {
   const handleSubmit = () => {
     let checkError = checkFieldValues(addUser);
     if (checkError == true) {
+      setIsLoading(true);
       fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/auth/login/checkUser/v1`, {
         method: 'POST',
         headers: {
@@ -82,9 +62,10 @@ function SignIn() {
       })
         .then(res => res.json())
         .then(res => {
+          setIsLoading(false);
           if (res.status === 200) {
             addUser.rememberMe && localStorage.setItem('invoice_dc_token', res.data.token);
-            localStorage.setItem('userData', JSON.stringify({ userId:res.data.userId, userName: res.data.userName, roleId: res.data.roleId }));
+            localStorage.setItem('userData', JSON.stringify({ userId: res.data.userId, userName: res.data.userName, roleId: res.data.roleId }));
             setContextSnackbar({
               ...contextSnackbar,
               status: true,

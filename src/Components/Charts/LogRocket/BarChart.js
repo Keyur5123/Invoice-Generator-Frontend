@@ -8,7 +8,7 @@ const BarChart = ({ chartData }) => {
           plugins: {
             title: {
               display: true,
-              text: "Manufacture of pcs during whole year"
+              text: "Manufacture of pcs during whole month"
             },
             legend: {
               display: false

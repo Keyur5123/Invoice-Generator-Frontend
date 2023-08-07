@@ -1,10 +1,12 @@
 import React from 'react';
 import { TextField } from '@mui/material';
 
-export default function TextFieldControl({ placeholder='',size, label, name, variant, onChange, error = null }) {
+export default function TextFieldControl({ value,placeholder = '', size, label, name, variant, onChange, disabled=false, error = null }) {
 
     return (
         <TextField
+            disabled={disabled}
+            value={value}
             size={size}
             label={label}
             name={name}

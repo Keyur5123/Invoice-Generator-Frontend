@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Box, Grid } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useInvoiceContext } from "../../Context/InvoiceContext";
@@ -8,20 +8,60 @@ import Snackbar from '../../Components/Snackbar';
 
 import Table from "../../Components/Table";
 
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import InputAdornment from '@mui/material/InputAdornment';
+import FormControl from '@mui/material/FormControl';
+import SearchIcon from '@mui/icons-material/Search';
+import Loader from "../../Components/Loader";
+import SelectDropdown from "../../Components/SelectDropDown";
+
 export default function InvoicesList() {
 
   const navigate = useNavigate();
-  const { isLoading, state, contextSnackbar, setContextSnackbar } = useInvoiceContext();
-  let { invoiceList, isUserAuthorized } = state;
+  const { state, contextSnackbar, setContextSnackbar } = useInvoiceContext();
+  let { invoiceList, isUserAuthorized, isLoading } = state;
+  const [searchData, setSearchData] = useState('');
+  const [selectUserData, setSelectUserData] = useState('');
+  const [invoiceUsers, setInvoiceUsers] = useState([]);
+
+  useEffect(() => {
+    setInvoiceUsers([]);
+    displayUserList(invoiceList)
+  }, [invoiceList])
+
+  function displayUserList(invoice) {
+    let uniqueUserObjects = [];
+    let uniqueObject = {};
+
+
+    for (let i in invoice) {
+      let user_name = invoice[i]?._id?.user_details?.user_name && invoice[i]?._id?.user_details?.user_name;
+      let objTitle = user_name;
+      if (objTitle) {
+        uniqueObject[objTitle] = { label: user_name, name: user_name };
+      }
+    }
+
+    for (let i in uniqueObject) {
+      uniqueUserObjects.push(uniqueObject[i]);
+      setInvoiceUsers(invoiceUsers => [...invoiceUsers, uniqueObject[i]])
+    }
+  }
+
 
   if (isLoading) {
-    return <p>Loading ....</p>
+    return <Loader />
   }
 
   if (!isUserAuthorized) {
     localStorage.removeItem('invoice_dc_token');
     localStorage.removeItem('userData');
     navigate('/login');
+  }
+
+  const handleChange = (e) => {
+    setSelectUserData(e)
   }
 
   return (
@@ -35,17 +75,43 @@ export default function InvoicesList() {
       <>
         <span className='flex justify-center main-header'>Invoices List</span>
 
-        <div className='flex justify-end'>
-          <div className='m-5 mr-0 bg-slate-600 w-1/3'>
-            <Link className='w-full' to='/add-new-invoice'>
-              <Button
-                sx={{ width: '100%' }}
-                variant="contained"
-                color='success'
-              >
-                Add New Item
-              </Button>
-            </Link>
+        {/* <div className='flex justify-end mt-4'> */}
+        {/* <div className='m-5 mr-0 w-1/3'> */}
+        <div className='mt-10 grid md:grid-cols-4 sm:grid-cols-12'>
+          <p></p>
+          <p></p>
+          <p></p>
+          <Link className='w-full' to='/add-new-invoice'>
+            <Button
+              sx={{ width: '100%' }}
+              variant="contained"
+              color='success'
+            >
+              Add New Item
+            </Button>
+          </Link>
+          {/* </div> */}
+        </div>
+
+        <div className='mt-7 grid grid-cols-1 md:grid-cols-4 sm:grid-cols-12'>
+          <div className='flex justify-start '>
+            <FormControl fullWidth size='small'>
+              <InputLabel htmlFor="outlined-adornment-amount">Search by name & challan, bill no</InputLabel>
+              <OutlinedInput
+                onChange={(e) => setSearchData(e.target.value)}
+                id="outlined-adornment-amount"
+                endAdornment={<InputAdornment position="start"><SearchIcon /></InputAdornment>}
+                label="Search by party name & challan , bill no"
+              />
+            </FormControl>
+          </div>&nbsp;
+          <p></p>
+          <div>
+            <SelectDropdown
+              label={selectUserData ? '' : "All Users Data"}
+              handleChange={handleChange}
+              ipArray={invoiceUsers}
+            />
           </div>
         </div>
 
@@ -53,7 +119,8 @@ export default function InvoicesList() {
           <Grid item xs={12}>
             <Table
               isExtractable={true}
-              invoiceList={invoiceList}
+              searchData={searchData}
+              invoiceList={invoiceList.filter(invoice => selectUserData ? invoice?._id?.user_details?.user_name === selectUserData : invoice)}
               isPaginationAllowed={true}
             />
           </Grid>

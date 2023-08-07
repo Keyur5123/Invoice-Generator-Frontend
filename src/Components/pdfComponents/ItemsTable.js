@@ -30,7 +30,7 @@ const ItemsTable = ({ invoiceList }) => {
       <TableRow items={invoiceList.billItems} />
       <TableFooter
         discount={invoiceList._id.discount}
-        gst={invoiceList._id.gst}
+        igst={invoiceList._id.igst}
         sgst={invoiceList._id.sgst}
         cgst={invoiceList._id.cgst}
         tds={invoiceList._id.tds}

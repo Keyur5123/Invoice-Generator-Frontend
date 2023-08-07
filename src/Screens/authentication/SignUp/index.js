@@ -16,31 +16,24 @@ Coded by www.creative-tim.com
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// react-router-dom components
 import { Link } from "react-router-dom";
-
-// @mui material components
 import { Box, Button, Input, Typography, Switch } from "@mui/material";
-
-// Authentication layout components
 import CoverLayout from "../Components/CoverLayout";
-
-// Images
-import curved9 from "../../../assets/images/curved-images/curved-6.jpg";
 
 // Images
 import curved6 from "../../../assets/images/curved-images/curved14.jpg";
 
 import Constants from "../../../Utilities/Constants/responseConstants"
 import TextFieldControl from "../../../Controls/TextFieldControl";
-
 import Snackbar from '../../../Components/Snackbar';
 import { useInvoiceContext } from "../../../Context/InvoiceContext";
+import Loader from  "../../../Components/Loader";
+
 
 function SignUp() {
   
   const navigate = useNavigate();
-  const { isLoading, state, dispatch, contextSnackbar, setContextSnackbar } = useInvoiceContext();
+  const { contextSnackbar, setContextSnackbar } = useInvoiceContext();
 
   const [newUser, setNewUser] = useState({
     user_name: '',
@@ -50,6 +43,11 @@ function SignUp() {
   })
 
   const [newUserError, setNewUserError] = useState({})
+  const [isLoading, setIsLoading] = useState(false);
+
+  if(isLoading){
+    return <Loader />;
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -70,6 +68,7 @@ function SignUp() {
   const handleSubmit = () => {
     let checkError = checkFieldValues(newUser);
     if (checkError == true && newUser.password === newUser.confirm_password) {
+      setIsLoading(true);
       fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/auth/register/addUser/v1`, {
         method: 'POST',
         headers: {
@@ -79,6 +78,7 @@ function SignUp() {
       })
         .then(res => res.json())
         .then(res => {
+          setIsLoading(false);
           if(res.status === 200){
             setContextSnackbar({
               ...contextSnackbar,

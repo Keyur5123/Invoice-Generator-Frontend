@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Button, IconButton, TextField } from '@mui/material';
 
-import SubCategory from "./SubCategory"
+import SubCategory from "./SubCategory";
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CloseSharpIcon from '@mui/icons-material/CloseSharp';
@@ -19,7 +19,7 @@ import { useInvoiceContext } from "../../../Context/InvoiceContext";
 import Constants from "../../../Utilities/Constants/responseConstants";
 import SelectCompo from "../../../Components/SelectDropDown";
 
-import { updatedProducts, upsertProducts } from "../../../ApiController/ProductsAndPartyApis";
+import { upsertProducts } from "../../../ApiController/ProductsAndPartyApis";
 
 const tableHeader = [
     {
@@ -74,7 +74,7 @@ const tableHeader = [
 
 ];
 
-export default function BillItems({ billHeaders, setBillHeaders, formatedDate, validate, snackbar, setSnackbar }) {
+export default function BillItems({ billHeaders, setBillHeaders, formatedDate, validate, snackbar, setSnackbar, setBillApiLoader }) {
     const navigate = useNavigate();
     const { dispatch, state, userData, token, getAllPartyNameAndProductsList } = useInvoiceContext();
     let userId = userData.userId;
@@ -93,10 +93,10 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
 
     const [billSubTotalAmount, setBillSubTotalAmount] = useState(0);
     const [discount, setDiscount] = useState(0);
-    const [gst, setGst] = useState(0);
     const [sgst, setSgst] = useState(0);
     const [cgst, setCgst] = useState(0);
-    const [tds, setTds] = useState(0); // Not used in total amount formula
+    const [igst, setIgst] = useState(0);
+    const [tds, setTds] = useState(0);
     const [billTotalAmount, setBillTotalAmount] = useState(0);
     const [toggle, setToggle] = useState(false);
     const [itemValidationError, setItemValidationError] = useState([]);
@@ -116,14 +116,15 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
         let total = billSubTotalAmount
             - ((billSubTotalAmount * (discount)) / 100)
             - ((billSubTotalAmount * (tds)) / 100)
-            + ((billSubTotalAmount * (gst)) / 100)
+            + ((billSubTotalAmount * (igst)) / 100)
             + ((billSubTotalAmount * (sgst)) / 100)
             + ((billSubTotalAmount * (cgst)) / 100)
-        setBillTotalAmount(total)
+        setBillTotalAmount(total);
         return total
     }
 
     const sendDataToServer = async (obj) => {
+        setBillApiLoader(true);
         await fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/save/newInvoice/${userData.userId}/v1`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -131,8 +132,8 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
         })
             .then(data => data.json())
             .then(data => {
-                dispatch({ type: 'ADD_NEW_INVOICE', payload: obj })
-                setSnackbar({ ...snackbar, status: true, message: 'Invoice saved successfully', severity: Constants.SUCCESS })
+                // ==== Loader Closed === //
+                setBillApiLoader(false);
                 // ==== Cleaning States ==== //
                 setBillItems([
                     {
@@ -152,13 +153,26 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
                 });
                 setBillSubTotalAmount(0);
                 setDiscount(0);
-                setGst(0);
+                setIgst(0);
                 setSgst(0);
                 setCgst(0);
                 setTds(0);
                 setBillTotalAmount(0);
+                if (data?.status == 401) {
+                    setSnackbar({ ...snackbar, status: true, message: Constants.USER_NOT_AUTHORIZED, severity: Constants.ERROR });
+                }
+                else if (data?.err) {
+                    setSnackbar({ ...snackbar, status: true, message: data?.err?.err ? data?.err?.err.toString() : data?.err.toString(), severity: Constants.ERROR });
+                }
+                else {
+                    obj._id = data.data.data
+                    dispatch({ type: 'ADD_NEW_INVOICE', payload: obj });
+                    setSnackbar({ ...snackbar, status: true, message: data.msg, severity: Constants.SUCCESS });
+                    navigate('/invoice-list');
+                }
             })
             .catch(err => {
+                setBillApiLoader(false);
                 setSnackbar({ ...snackbar, status: true, message: err.message, severity: Constants.ERROR })
             })
     }
@@ -176,7 +190,7 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
             upsertProducts(updatedProducts, userId, token, true)
                 .then(data => {
                     if (data?.status == 401) {
-                        setSnackbar({ ...snackbar, status: true, message: 'User unauthorized', severity: Constants.ERROR });
+                        setSnackbar({ ...snackbar, status: true, message: Constants.USER_NOT_AUTHORIZED, severity: Constants.ERROR });
                     }
                     else if (data?.err) {
                         setSnackbar({ ...snackbar, status: true, message: data?.err?.err, severity: Constants.ERROR });
@@ -193,7 +207,7 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
     }
 
     const saveInvoice = () => {
-        if (validate() == true) {
+        if (validate() == true && checkTableItemValues(billItems[0]) == true) {
             var obj = {
                 party_name: billHeaders.partyName,
                 address: billHeaders.address,
@@ -201,7 +215,7 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
                 date_created: billHeaders.date,
                 billItems: billItems,
                 discount: discount,
-                gst: gst,
+                igst: igst,
                 sgst: sgst,
                 cgst: cgst,
                 tds: tds,
@@ -306,11 +320,11 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
     const handleDiscount = (e) => {
         setDiscount(Math.abs(e.target.value))
     }
-    const handleGst = (e) => {
-        setGst(Math.abs(e.target.value))
+    const handleIgst = (e) => {
+        setIgst(Math.abs(e.target.value))
     }
     const handleSgst = (e) => {
-        setGst(Math.abs(e.target.value))
+        setSgst(Math.abs(e.target.value))
     }
     const handleCgst = (e) => {
         setCgst(Math.abs(e.target.value))
@@ -320,7 +334,7 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
     }
 
     let viewPdf = () => {
-        console.log("View PDF");
+        // console.log("View PDF");
     }
 
     return (
@@ -403,9 +417,9 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
                     addNewItem={addNewItem}
                     billSubTotalAmount={billSubTotalAmount}
                     handleDiscount={handleDiscount}
-                    handleGst={handleGst}
                     handleSgst={handleSgst}
                     handleCgst={handleCgst}
+                    handleIgst={handleIgst}
                     handleTds={handleTds}
                     getTotalAmount={getTotalAmount}
                 />
