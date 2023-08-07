@@ -27,11 +27,11 @@ import Constants from "../../../Utilities/Constants/responseConstants"
 import TextFieldControl from "../../../Controls/TextFieldControl";
 import Snackbar from '../../../Components/Snackbar';
 import { useInvoiceContext } from "../../../Context/InvoiceContext";
-import Loader from  "../../../Components/Loader";
-
+import Loader from "../../../Components/Loader";
+import { SignUpUser } from "../../../ApiController/AuthApis";
 
 function SignUp() {
-  
+
   const navigate = useNavigate();
   const { contextSnackbar, setContextSnackbar } = useInvoiceContext();
 
@@ -45,7 +45,7 @@ function SignUp() {
   const [newUserError, setNewUserError] = useState({})
   const [isLoading, setIsLoading] = useState(false);
 
-  if(isLoading){
+  if (isLoading) {
     return <Loader />;
   }
 
@@ -69,17 +69,11 @@ function SignUp() {
     let checkError = checkFieldValues(newUser);
     if (checkError == true && newUser.password === newUser.confirm_password) {
       setIsLoading(true);
-      fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/auth/register/addUser/v1`, {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ user_name: newUser.user_name, email: newUser.email, password: newUser.password })
-      })
-        .then(res => res.json())
+
+      SignUpUser(newUser.user_name, newUser.email, newUser.password)
         .then(res => {
           setIsLoading(false);
-          if(res.status === 200){
+          if (res.status === 200) {
             setContextSnackbar({
               ...contextSnackbar,
               status: true,

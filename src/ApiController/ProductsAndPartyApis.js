@@ -1,4 +1,14 @@
 
+export async function getAllPartyNameAndProducts(userId, token) {
+
+    let res = await fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/product-and-party/check/all-products-and-partyFerms/${userId}/v1`, {
+        headers: { Authentication: `Bearer ${token}` }
+    })
+        .then(res => res.json())
+
+    return res;
+}
+
 export async function upsertProducts(productDetails, userId, token, updateValue = false) {
 
     let res = await fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/product-and-party/upsert/product-list/${userId}/v1`, {
