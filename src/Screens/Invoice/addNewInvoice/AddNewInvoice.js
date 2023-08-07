@@ -7,11 +7,12 @@ import BillItems from "./BillItems";
 import Constants from "../../../Utilities/Constants/responseConstants";
 import { useInvoiceContext } from "../../../Context/InvoiceContext";
 import SelectCompo from "../../../Components/SelectDropDown";
+import Loader from "../../../Components/Loader";
 
 export default function Home() {
 
-  const { isLoading, state, contextSnackbar, setContextSnackbar } = useInvoiceContext();
-  let { partyNameList } = state;
+  const { state, contextSnackbar, setContextSnackbar } = useInvoiceContext();
+  let { partyNameList, isLoading } = state;
 
   let currDate = new Date;
   let formatedDate = [currDate.getDate(), currDate.getMonth() + 1, currDate.getFullYear()].join('-');
@@ -29,6 +30,8 @@ export default function Home() {
   });
 
   const [errors, setErrors] = useState({});
+  
+  const [billApiLoader, setBillApiLoader] = useState(false);
 
   const validate = () => {
     let errObj = {};
@@ -45,14 +48,18 @@ export default function Home() {
   }
 
   let handlePartyName = (e) => {
-    setBillHeaders({ ...billHeaders, partyName: e })
+    partyNameList.forEach(partyFerm => {
+      if (partyFerm.name == e) {
+        setBillHeaders({ ...billHeaders, partyName: e, address: partyFerm.address });
+      }
+    });
   }
 
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
   });
 
-  if (isLoading) {
+  if (isLoading || billApiLoader) {
     return <p>Loading ....</p>
   }
 
@@ -89,6 +96,7 @@ export default function Home() {
               <h6 className='mr-5'>Address</h6>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <TextFieldControl
+                value={billHeaders.address}
                 size='small'
                 label="Address"
                 name="address"
@@ -104,6 +112,7 @@ export default function Home() {
               <h6 className='mr-5'>Bill No.</h6>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <TextFieldControl
+                value={billHeaders.billNo}
                 size='small'
                 label="Bill No."
                 name="billNo"
@@ -116,6 +125,7 @@ export default function Home() {
               <h6 className='mr-5'>Date</h6>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <TextFieldControl
+                value={billHeaders.date}
                 size='small'
                 label={billHeaders.date}
                 name="date"
@@ -135,6 +145,7 @@ export default function Home() {
           validate={validate}
           snackbar={snackbarData}
           setSnackbar={setSnackbarData}
+          setBillApiLoader={setBillApiLoader}
         />
 
       </React.Fragment>

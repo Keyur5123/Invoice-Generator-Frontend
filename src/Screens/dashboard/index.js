@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { useInvoiceContext } from "../../Context/InvoiceContext";
 import Charts from "../../Components/Charts/LogRocket";
 import { useNavigate } from 'react-router-dom';
+import Loader from "../../Components/Loader";
 
 import Snackbar from '../../Components/Snackbar';
 
@@ -15,8 +16,8 @@ import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 
 function Dashboard() {
     const navigate = useNavigate();
-    const { isLoading, state, contextSnackbar, setContextSnackbar } = useInvoiceContext();
-    let { invoiceList, isUserAuthorized } = state
+    const { state, contextSnackbar, setContextSnackbar } = useInvoiceContext();
+    let { invoiceList, isUserAuthorized, isLoading } = state
     const [totalPcs, setTotalPcs] = useState(0);
     const [totalAmount, setTotalAmount] = useState(0);
 
@@ -26,7 +27,7 @@ function Dashboard() {
     }, [invoiceList]);
 
     if (isLoading) {
-        return <p>Loading ....</p>
+        return <Loader />
     }
 
     if (!isUserAuthorized) {

@@ -25,8 +25,9 @@ function Row(props) {
                 <TableCell component="th" align="center" scope="row">{row?._id?.bill_no}</TableCell>
                 <TableCell align="center">{row?._id?.party_name}</TableCell>
                 <TableCell align="center">{row?._id?.date_created.split('T')[0]}</TableCell>
-                <TableCell align="center">{row?._id?.gst}</TableCell>
                 <TableCell align="center">{row?._id?.sgst}</TableCell>
+                <TableCell align="center">{row?._id?.cgst}</TableCell>
+                <TableCell align="center">{row?._id?.igst}</TableCell>
                 <TableCell align="center">{row?._id?.billTotalAmount}</TableCell>
                 <TableCell align="center">
                     <Link to={`/generate-invoice-pdf/${row?._id?._id}`}>
@@ -83,14 +84,14 @@ function Row(props) {
     );
 }
 
-function TableComponent({ isExtractable, invoiceList, isPaginationAllowed }) {
+function TableComponent({ isExtractable, searchData, invoiceList, isPaginationAllowed }) {
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    let shortedData = invoiceList?.sort(function(a, b){
-        var aa = a._id.date_created.split('-').reverse().join(),
-            bb = b._id.date_created.split('-').reverse().join();
+    let shortedData = invoiceList?.sort(function (a, b) {
+        var aa = a._id.date_created.split('-').join(),
+            bb = b._id.date_created.split('-').join();
         return aa < bb ? -1 : (aa > bb ? 1 : 0);
     });
 
@@ -104,7 +105,7 @@ function TableComponent({ isExtractable, invoiceList, isPaginationAllowed }) {
     };
 
     return (
-        <div className='mt-4 w-full max-[500px]:w-[365px]'>
+        <div className='mt-4 w-full max-[500px]:w-[330px]'>
             <Box>
                 <Paper sx={{ mb: 2 }}>
                     <TableContainer>
@@ -113,9 +114,9 @@ function TableComponent({ isExtractable, invoiceList, isPaginationAllowed }) {
                                 <TableRow>
                                     {
                                         (isExtractable ?
-                                            ['', 'Bill No', 'Party Name', 'Date', 'GST', 'SGST', 'Total Amount', 'Download PDF']
+                                            ['', 'Bill No', 'Party Name', 'Date', 'SGST', 'CGST', 'IGST', 'Total Amount', 'Download PDF']
                                             :
-                                            ['Bill No', 'Party Name', 'Date', 'GST', 'SGST', 'Total Amount', 'Download PDF'])
+                                            ['Bill No', 'Party Name', 'Date', 'SGST', 'CGST', 'IGST', 'Total Amount', 'Download PDF'])
                                             .map((item, index) => (
                                                 <TableCell
                                                     key={index}
@@ -130,7 +131,15 @@ function TableComponent({ isExtractable, invoiceList, isPaginationAllowed }) {
                             </TableHead>
                             <TableBody>
                                 {invoiceList && shortedData.length > 0 && shortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    .map((row,index) => (
+                                    .filter((obj, index) => searchData ?
+                                        obj?.billItems[0]?.partyChNo?.includes(searchData) /* checking is user searching data by ch no or go for party name */
+                                            ? obj?.billItems[0]?.partyChNo?.includes(searchData) /* search by ch no */
+                                            : obj?._id?.party_name?.toLowerCase().includes(searchData.toLowerCase()) /* checking is user searching data by party name or go for bill no */
+                                                ? obj?._id?.party_name?.toLowerCase().includes(searchData.toLowerCase()) /* search by ch party name */
+                                                : obj?._id?.bill_no?.includes(searchData) /* search by bill no */
+                                        : obj
+                                    )
+                                    .map((row, index) => (
                                         <Row key={index} row={row} isExtractable={isExtractable} />
                                     ))
                                 }

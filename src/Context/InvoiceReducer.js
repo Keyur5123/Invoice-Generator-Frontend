@@ -12,7 +12,7 @@ function InvoiceReducer(state, action) {
                 isUserAuthorized: false
             }
 
-        case 'SET_API_ERROR':
+        case 'SET_LOADING_OFF':
             return {
                 ...state,
                 isLoading: false
@@ -49,18 +49,18 @@ function InvoiceReducer(state, action) {
                 productsList: action.payload.ProductsList
             }
 
-
         case 'ADD_NEW_INVOICE':
             let tempArr = [...state?.invoiceList];
             let tempObj = {};
             let tempModifiedArr = [];
 
             tempObj._id = {
+                "_id": action.payload._id,
                 "party_name": action.payload.party_name,
                 "address": action.payload.address,
                 "bill_no": action.payload.bill_no,
                 "discount": action.payload.discount,
-                "gst": action.payload.gst,
+                "igst": action.payload.igst,
                 "sgst": action.payload.sgst,
                 "cgst": action.payload.cgst,
                 "tds": action.payload.tds,
@@ -83,7 +83,7 @@ function InvoiceReducer(state, action) {
                 }
                 tempModifiedArr.push(modifiedObj)
             })
-            
+
             tempObj.billItems = tempModifiedArr
             tempArr.push(tempObj)
             return {

@@ -81,10 +81,10 @@ function TableHeader({ subHeaderData }) {
                     <Text>Sitaram</Text>
                 </View>
             </View>
-            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingTop: '2px' }}>
+            {/* <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingTop: '2px' }}>
                     <Text style={{ marginLeft : '10%'}}>Subh</Text>
                     <Text style={{ marginRight : '10%'}}>Labh</Text>
-            </View>
+            </View> */}
             <View style={styles.TableSubHeader}>
                 <Text style={styles.TableSubHeaderHeading}><Text style={{ fontSize: '29' ,fontWeight: '900' }}>D</Text>arshan <Text style={{ fontSize: '29' ,fontWeight: '900' }}>C</Text>reation</Text>
                 <View style={styles.TableSubHeaderBorder}></View>

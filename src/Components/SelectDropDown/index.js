@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import { SelectPicker } from 'rsuite';
 
-const Index = ({ handleChange, id, ipArray }) => {
+const Index = ({ handleChange, id, ipArray, label }) => {
 
   const data = ipArray?.map(
-    item => ({ label: item?.name, value: item?.name })
+    (item,index) => ({ key:index, label: item?.name, value: item?.name })
   );
 
   return (
     <>
-      <SelectPicker name='description' data={data} style={{ width: 224 }} block onChange={(e) => {handleChange(e,id)}} />
+      <SelectPicker key={data.key} name='description' label={label} data={data} style={{ width: 224 }} block onChange={(e) => {handleChange(e,id)}} />
     </>
   )
 };

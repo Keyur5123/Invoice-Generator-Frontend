@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import Chart from "chart.js/auto";
-import { CategoryScale } from "chart.js";
+import React, { useEffect, useState } from 'react';
 import PieChart from './PieChart';
 import BarChart from './BarChart';
 import { Grid } from '@mui/material';
+import { registerables, Chart, CategoryScale } from "chart.js";
+
+Chart.register(...registerables);    // for solving error :- linear undefined
+Chart.register(CategoryScale);    // for solving error :- category undefined
 
 function sortFunction(a, b) {
     var dateA = new Date(a._id.date_created).getTime();

@@ -4,9 +4,9 @@ import { Button } from '@mui/material';
 import TextFieldControl from "../../Controls/TextFieldControl";
 import Snackbar from '../../Components/Snackbar';
 import { useInvoiceContext } from "../../Context/InvoiceContext";
-import { upsertProducts } from "../../ApiController/ProductsAndPartyApis";
+import { upsertProducts, upsertPartyFerm } from "../../ApiController/ProductsAndPartyApis";
 
-function AddProductAndParty() {
+function AddProductAndParty({ snackbar, setSnackbar, setApiCallLoader }) {
 
     const { userData, token, getAllPartyNameAndProductsList } = useInvoiceContext();
     let userId = userData.userId;
@@ -16,17 +16,13 @@ function AddProductAndParty() {
         rate: ''
     });
     const [partyFermDetails, setPartyFermDetails] = useState({
-        name: ''
+        name: '',
+        address: '',
+        gstNo: ''
     });
 
     const [productDetailsError, setproductDetailsError] = useState();
     const [partyFermError, setPartyFermError] = useState();
-
-    const [snackbar, setSnackbar] = useState({
-        status: false,
-        message: '',
-        severity: ''
-    });
 
     let ProductValidator = () => {
         let temp = {}
@@ -38,7 +34,9 @@ function AddProductAndParty() {
 
     let PartyFermValidator = () => {
         let temp = {}
-        temp.name = productDetails?.name ? '' : Constants.FIELD_REQUIRED
+        temp.name = partyFermDetails?.name ? '' : Constants.FIELD_REQUIRED
+        temp.address = partyFermDetails?.address ? '' : Constants.FIELD_REQUIRED
+        temp.gstNo = partyFermDetails?.gstNo ? '' : Constants.FIELD_REQUIRED
         setPartyFermError(temp)
         return Object.values(temp).every(val => val == '')
     }
@@ -49,20 +47,27 @@ function AddProductAndParty() {
 
     let handleProductSubmit = async () => {
         if (ProductValidator() == true) {
+            setApiCallLoader(true);
             upsertProducts(productDetails, userId, token)
                 .then(data => {
+                    setApiCallLoader(false);
+                    setProductDetails({
+                        name: '',
+                        rate: ''
+                    })
                     if (data?.status == 401) {
-                        setSnackbar({ ...snackbar, status: true, message: 'User unauthorized', severity: Constants.ERROR });
+                        setSnackbar({ ...snackbar, status: true, message: Constants.USER_NOT_AUTHORIZED, severity: Constants.ERROR });
                     }
                     else if (data?.err) {
                         setSnackbar({ ...snackbar, status: true, message: data?.err?.err, severity: Constants.ERROR });
                     }
                     else {
                         getAllPartyNameAndProductsList();
-                        setSnackbar({ ...snackbar, status: true, message: data?.data?.msg, severity: Constants.SUCCESS });
+                        setSnackbar({ ...snackbar, status: true, message: Constants.PRODUCT_ADDED_SUCCESSFULLY, severity: Constants.SUCCESS });
                     }
                 })
                 .catch(error => {
+                    setApiCallLoader(false);
                     setSnackbar({ ...snackbar, status: true, message: error.toString(), severity: Constants.ERROR });
                 });
         }
@@ -77,25 +82,28 @@ function AddProductAndParty() {
 
     let handlePartyFermSubmit = async () => {
         if (PartyFermValidator() == true) {
-            await fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/product-and-party/save/add-new-partyFerm/${userData.userId}/v1`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', Authentication: 'Bearer ' + token },
-                body: JSON.stringify({ name: partyFermDetails.name })
-            })
-                .then(res => res.json())
+            setApiCallLoader(true);
+            upsertPartyFerm(partyFermDetails, userId, token)
                 .then(data => {
+                    setApiCallLoader(false);
+                    setPartyFermDetails({
+                        name: '',
+                        address: '',
+                        gstNo: ''
+                    })
                     if (data?.status == 401) {
-                        setSnackbar({ ...snackbar, status: true, message: 'User unauthorized', severity: Constants.ERROR });
+                        setSnackbar({ ...snackbar, status: true, message: Constants.USER_NOT_AUTHORIZED, severity: Constants.ERROR });
                     }
                     else if (data?.err) {
                         setSnackbar({ ...snackbar, status: true, message: data?.err?.err, severity: Constants.ERROR });
                     }
                     else {
                         getAllPartyNameAndProductsList();
-                        setSnackbar({ ...snackbar, status: true, message: data?.data?.msg, severity: Constants.SUCCESS });
+                        setSnackbar({ ...snackbar, status: true, message: Constants.PARTY_ADDED_SUCCESSFULLY, severity: Constants.SUCCESS });
                     }
                 })
                 .catch(error => {
+                    setApiCallLoader(false);
                     setSnackbar({ ...snackbar, status: true, message: error.toString(), severity: Constants.ERROR });
                 })
         }
@@ -117,6 +125,7 @@ function AddProductAndParty() {
                         <div className='flex items-center mt-5 justify-between min-w-[50%]'>
                             <h6 className='mr-5'>Name</h6> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <TextFieldControl
+                                value={productDetails.name}
                                 size='small'
                                 label="Product Name"
                                 name="name"
@@ -128,6 +137,7 @@ function AddProductAndParty() {
                         <div className='flex items-center mt-5 justify-between min-w-[50%]'>
                             <h6 className='mr-5'>Rate</h6> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <TextFieldControl
+                                value={productDetails.rate}
                                 size='small'
                                 label="Rate"
                                 name="rate"
@@ -155,12 +165,37 @@ function AddProductAndParty() {
                         <div className='flex items-center mt-5 justify-between min-w-[50%]'>
                             <h6 className='mr-5'>Name</h6> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <TextFieldControl
+                                value={partyFermDetails.name}
                                 size='small'
                                 label="Party Name"
                                 name="name"
                                 variant="outlined"
                                 onChange={handlePartyFermChange}
                                 error={partyFermError?.name}
+                            />
+                        </div>
+                        <div className='flex items-center mt-5 justify-between min-w-[50%]'>
+                            <h6 className='mr-5'>Address</h6> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <TextFieldControl
+                                value={partyFermDetails.address}
+                                size='small'
+                                label="Address"
+                                name="address"
+                                variant="outlined"
+                                onChange={handlePartyFermChange}
+                                error={partyFermError?.address}
+                            />
+                        </div>
+                        <div className='flex items-center mt-5 justify-between min-w-[50%]'>
+                            <h6 className='mr-5'>Gst No</h6> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <TextFieldControl
+                                value={partyFermDetails.gstNo}
+                                size='small'
+                                label="Gst No"
+                                name="gstNo"
+                                variant="outlined"
+                                onChange={handlePartyFermChange}
+                                error={partyFermError?.gstNo}
                             />
                         </div>
 

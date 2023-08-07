@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
         flex : 1/3,
     },
     StempFor : {
+        marginTop:'10px',
         fontSize:"14px",
         textAlign: "center"
     },
@@ -53,13 +54,8 @@ const styles = StyleSheet.create({
     },
 });
 
-function TableFooter({ discount, gst, sgst, cgst, tds, billTotalAmount }) {
-    console.log("discount : - ",discount);
-    console.log("gst : - ",gst);
-    console.log("sgst : - ",sgst);
-    console.log("cgst : - ",cgst);
-    console.log("tds : - ",tds);
-    console.log("billTotalAmount : - ",billTotalAmount);
+function TableFooter({ discount, igst, sgst, cgst, tds, billTotalAmount }) {
+    
     return (
         <View style={styles.TableFooter}>
             <View style={styles.TableFooterItem}>
@@ -73,20 +69,20 @@ function TableFooter({ discount, gst, sgst, cgst, tds, billTotalAmount }) {
                         {/* // paddingRight: "10px" in case of justify-between */}
                     </View>
                     <View style={styles.TaxName}>
-                        <Text style={{ paddingLeft : "5px"}}>Gst %</Text>
-                        <Text style={{ paddingLeft: "30px" }}>{gst}</Text>
-                    </View>
-                    <View style={styles.TaxName}>
                         <Text style={{ paddingLeft : "5px"}}>Sgst %</Text>
-                        <Text style={{ paddingLeft: "27px" }}>{sgst}</Text>
+                        <Text style={{ paddingLeft: "25px" }}>{sgst}</Text>
                     </View>
                     <View style={styles.TaxName}>
                         <Text style={{ paddingLeft : "5px"}}>Cgst %</Text>
-                        <Text style={{ paddingLeft: "27px" }}>{cgst}</Text>
+                        <Text style={{ paddingLeft: "24px" }}>{cgst}</Text>
+                    </View>
+                    <View style={styles.TaxName}>
+                        <Text style={{ paddingLeft : "5px"}}>Igst %</Text>
+                        <Text style={{ paddingLeft: "30px" }}>{igst}</Text>
                     </View>
                     <View style={styles.TaxName}>
                         <Text style={{ paddingLeft : "5px"}}>Tds %</Text>
-                        <Text style={{ paddingLeft: "31px" }}>{tds}</Text>
+                        <Text style={{ paddingLeft: "29px" }}>{tds}</Text>
                     </View>
                     <View style={styles.TaxName}>
                         <Text style={{ paddingLeft : "5px"}}>Total</Text>

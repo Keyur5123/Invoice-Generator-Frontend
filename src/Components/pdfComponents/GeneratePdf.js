@@ -17,7 +17,7 @@ function GeneratePdf() {
                 return invoice
             }
         });
-        console.log("filteredInvoices :- ",filteredInvoices);
+
         setInvoiceData(filteredInvoices);
     }, [invoiceList]);
 
