@@ -34,7 +34,6 @@ export default function InvoicesList() {
     let uniqueUserObjects = [];
     let uniqueObject = {};
 
-
     for (let i in invoice) {
       let user_name = invoice[i]?._id?.user_details?.user_name && invoice[i]?._id?.user_details?.user_name;
       let objTitle = user_name;
@@ -48,7 +47,6 @@ export default function InvoicesList() {
       setInvoiceUsers(invoiceUsers => [...invoiceUsers, uniqueObject[i]])
     }
   }
-
 
   if (isLoading) {
     return <Loader />

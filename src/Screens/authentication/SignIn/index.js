@@ -13,7 +13,8 @@ import Constants from "../../../Utilities/Constants/responseConstants"
 import TextFieldControl from "../../../Controls/TextFieldControl";
 import Snackbar from '../../../Components/Snackbar';
 import { useInvoiceContext } from "../../../Context/InvoiceContext";
-import Loader from  "../../../Components/Loader";
+import Loader from "../../../Components/Loader";
+import { SignInUser } from "../../../ApiController/AuthApis";
 
 function SignIn() {
 
@@ -29,7 +30,7 @@ function SignIn() {
   const [addUserError, setAddUserError] = useState({})
   const [isLoading, setIsLoading] = useState(false);
 
-  if(isLoading){
+  if (isLoading) {
     return <Loader />;
   }
 
@@ -53,14 +54,8 @@ function SignIn() {
     let checkError = checkFieldValues(addUser);
     if (checkError == true) {
       setIsLoading(true);
-      fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/auth/login/checkUser/v1`, {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ email: addUser.email, password: addUser.password })
-      })
-        .then(res => res.json())
+
+      SignInUser(addUser.email, addUser.password)
         .then(res => {
           setIsLoading(false);
           if (res.status === 200) {

@@ -1,6 +1,8 @@
 import { createContext, useState, useContext, useEffect, useReducer } from "react";
 import reducer from "./InvoiceReducer";
 import Constants from "../Utilities/Constants/responseConstants";
+import { getAllInvoices } from "../ApiController/InvoiceApis";
+import { getAllPartyNameAndProducts } from "../ApiController/ProductsAndPartyApis";
 
 const AppContext = createContext();
 
@@ -26,10 +28,7 @@ const AppProvider = ({ children }) => {
     const getInvoiceList = (token) => {
         // dispatch({ type: 'SET_LOADING' })
         try {
-            fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/check/allInvoices/${userData.userId}/v1`, {
-                headers: { Authentication: `Bearer ${token}` }
-            })
-                .then(res => res.json())
+            getAllInvoices(userData.userId, token)
                 .then(response => {
                     dispatch({ type: 'SET_LOADING_OFF' })
                     if (response?.data?.status === 200) {
@@ -54,13 +53,10 @@ const AppProvider = ({ children }) => {
         }
     }
 
-    async function getAllPartyNameAndProductsList () {
+    async function getAllPartyNameAndProductsList() {
         // dispatch({ type: 'SET_LOADING' })
         try {
-            await fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/product-and-party/check/all-products-and-partyFerms/${userData.userId}/v1`, {
-                headers: { Authentication: `Bearer ${token}` }
-            })
-                .then(response => response.json())
+            getAllPartyNameAndProducts(userData.userId, token)
                 .then(response => {
                     dispatch({ type: 'SET_LOADING_OFF' })
                     if (response?.data?.status == 200) {

@@ -30,7 +30,7 @@ export default function Home() {
   });
 
   const [errors, setErrors] = useState({});
-  
+
   const [billApiLoader, setBillApiLoader] = useState(false);
 
   const validate = () => {
@@ -60,7 +60,7 @@ export default function Home() {
   });
 
   if (isLoading || billApiLoader) {
-    return <p>Loading ....</p>
+    return <Loader />
   }
 
   return (

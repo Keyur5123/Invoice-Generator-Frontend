@@ -19,6 +19,7 @@ import { useInvoiceContext } from "../../../Context/InvoiceContext";
 import Constants from "../../../Utilities/Constants/responseConstants";
 import SelectCompo from "../../../Components/SelectDropDown";
 
+import { saveNewInvoice } from "../../../ApiController/InvoiceApis";
 import { upsertProducts } from "../../../ApiController/ProductsAndPartyApis";
 
 const tableHeader = [
@@ -125,12 +126,8 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
 
     const sendDataToServer = async (obj) => {
         setBillApiLoader(true);
-        await fetch(`${process.env.REACT_APP_DARSHAN_CREATION_API}/darshan-creation/save/newInvoice/${userData.userId}/v1`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ obj })
-        })
-            .then(data => data.json())
+
+        saveNewInvoice(obj, userData.userId, token)
             .then(data => {
                 // ==== Loader Closed === //
                 setBillApiLoader(false);
@@ -269,7 +266,8 @@ export default function BillItems({ billHeaders, setBillHeaders, formatedDate, v
 
     const removeItem = (id) => {
         if (billItems.length == 1 || (billItems[id].item_amount == 0 && id == 0)) {
-            alert("Can't Remove first item");
+            setSnackbar({ ...snackbar, status: true, message: Constants.CANNOT_REMOVE_FIRST_ITEM, severity: Constants.ERROR });
+            alert(Constants.CANNOT_REMOVE_FIRST_ITEM);
         }
         else {
             let remainedItems = [];
