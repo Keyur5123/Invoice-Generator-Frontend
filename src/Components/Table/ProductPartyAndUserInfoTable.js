@@ -18,7 +18,7 @@ function ProductItemTable({ productsList, partyNameList, allUsersList, searchIte
     };
 
     return (
-        <div className="text-end justify-content-center max-[500px]:w-[330px] overflow-x-scroll">
+        <div className="text-end justify-content-center max-[500px]:w-[330px] overflow-x-scroll md:overflow-hidden">
             <table cellSpacing="0" className="mt-4" style={{ width: "100%", textAlign: 'center' }}>
                 <thead>
                     {productsList ?
