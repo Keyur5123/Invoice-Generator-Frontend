@@ -118,8 +118,8 @@ export default function Home() {
               <h6 className='mr-5'>Bill No.</h6>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <TextFieldControl
-                value={billHeaders.billNo}
                 type='number'
+                value={billHeaders.billNo}
                 size='small'
                 label="Bill No."
                 name="billNo"
