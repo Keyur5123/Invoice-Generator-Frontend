@@ -17,8 +17,9 @@ const initialState = {
 
 const AppProvider = ({ children }) => {
     let token = localStorage.getItem('invoice_dc_token');
-    let storageRawUserData = localStorage.getItem('userData')
-    let userData = storageRawUserData && decryptData(storageRawUserData);
+    let userData = localStorage.getItem('userData')
+    // let storageRawUserData = localStorage.getItem('userData')
+    // let userData = storageRawUserData && decryptData(storageRawUserData);
     let [state, dispatch] = useReducer(reducer, initialState);
 
     let [contextSnackbar, setContextSnackbar] = useState({

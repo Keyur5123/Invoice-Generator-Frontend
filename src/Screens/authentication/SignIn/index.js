@@ -61,8 +61,9 @@ function SignIn() {
           setIsLoading(false);
           if (res.status === 200) {
             addUser.rememberMe && localStorage.setItem('invoice_dc_token', res.data.token);
-            let encryptedData = encryptData({ userId: res.data.userId, userName: res.data.userName, roleId: res.data.roleId })
-            localStorage.setItem('userData', encryptedData);
+            // let encryptedData = encryptData({ userId: res.data.userId, userName: res.data.userName, roleId: res.data.roleId })
+            // localStorage.setItem('userData', encryptedData);
+            localStorage.setItem('userData', { userId: res.data.userId, userName: res.data.userName, roleId: res.data.roleId });
             setContextSnackbar({
               ...contextSnackbar,
               status: true,
