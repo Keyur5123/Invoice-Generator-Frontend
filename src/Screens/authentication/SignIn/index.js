@@ -15,6 +15,7 @@ import Snackbar from '../../../Components/Snackbar';
 import { useInvoiceContext } from "../../../Context/InvoiceContext";
 import Loader from "../../../Components/Loader";
 import { SignInUser } from "../../../ApiController/AuthApis";
+import { encryptData } from "../../../Utilities/Cryoto"
 
 function SignIn() {
 
@@ -60,7 +61,8 @@ function SignIn() {
           setIsLoading(false);
           if (res.status === 200) {
             addUser.rememberMe && localStorage.setItem('invoice_dc_token', res.data.token);
-            localStorage.setItem('userData', JSON.stringify({ userId: res.data.userId, userName: res.data.userName, roleId: res.data.roleId }));
+            let encryptedData = encryptData({ userId: res.data.userId, userName: res.data.userName, roleId: res.data.roleId })
+            localStorage.setItem('userData', encryptedData);
             setContextSnackbar({
               ...contextSnackbar,
               status: true,

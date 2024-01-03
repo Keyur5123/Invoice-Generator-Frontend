@@ -8,6 +8,7 @@ export async function SignInUser(email, password) {
         body: JSON.stringify({ email, password })
     })
         .then(res => res.json())
+        .catch(err => err);
 
     return res;
 }
@@ -21,6 +22,7 @@ export async function SignUpUser(user_name, email, password) {
         body: JSON.stringify({ user_name, email, password })
     })
         .then(res => res.json())
+        .catch(err => err);
 
     return res;
 }

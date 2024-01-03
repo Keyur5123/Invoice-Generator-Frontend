@@ -36,4 +36,6 @@ code {
   border-style: solid !important;
   border-color: rgb(178, 177, 177) !important;
 }
-
+.rs-picker-default .rs-picker-toggle.rs-btn .rs-picker-toggle-caret, .rs-picker-default .rs-picker-toggle.rs-btn .rs-picker-toggle-clean {
+  display: none;
+}

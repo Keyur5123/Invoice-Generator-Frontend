@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, TextField } from '@mui/material';
 
-export default function SubCategory({ addNewItem, billSubTotalAmount, handleDiscount, handleIgst, handleSgst, handleCgst, handleTds, getTotalAmount }) {
+export default function SubCategory({ addNewItem, sgst, cgst, igst, tds, discount, billSubTotalAmount, handleDiscount, handleIgst, handleSgst, handleCgst, handleTds, getTotalAmount }) {
 
     return (
         <React.Fragment>
@@ -25,6 +25,7 @@ export default function SubCategory({ addNewItem, billSubTotalAmount, handleDisc
                     <div className='flex justify-around items-center mt-3'>
                         <TextField
                             style={{ width: '100px' }}
+                            value={sgst}
                             disabled={billSubTotalAmount <= 0 && true}
                             name='Sgst'
                             type='number'
@@ -35,6 +36,7 @@ export default function SubCategory({ addNewItem, billSubTotalAmount, handleDisc
                         />
                         <TextField
                             style={{ width: '100px' }}
+                            value={cgst}
                             disabled={billSubTotalAmount <= 0 && true}
                             name='Cgst'
                             type='number'
@@ -45,6 +47,7 @@ export default function SubCategory({ addNewItem, billSubTotalAmount, handleDisc
                         />
                         <TextField
                             style={{ width: '100px' }}
+                            value={igst}
                             disabled={billSubTotalAmount <= 0 && true}
                             name='Igst'
                             type='number'
@@ -57,6 +60,7 @@ export default function SubCategory({ addNewItem, billSubTotalAmount, handleDisc
                     <div className='flex justify-around items-center mt-3'>
                         <TextField
                             style={{ width: '160px' }}
+                            value={discount}
                             disabled={billSubTotalAmount <= 0 && true}
                             name='Discount'
                             type='number'
@@ -67,6 +71,7 @@ export default function SubCategory({ addNewItem, billSubTotalAmount, handleDisc
                         />
                         <TextField
                             style={{ width: '160px' }}
+                            value={tds}
                             disabled={billSubTotalAmount <= 0 && true}
                             name='Tds'
                             type='number'

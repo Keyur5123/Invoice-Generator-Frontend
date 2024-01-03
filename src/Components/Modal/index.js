@@ -22,7 +22,21 @@ const style = {
     p: 4,
 };
 
-export default function Index({ isProductModel, isPartyFermModel, isUserModel, status, modelData, open, setOpen, errors, handleModelDataChange, handleUpdateItem, handleDeleteItem }) {
+export default function Index({
+    isProductModel,
+    isPartyFermModel,
+    isUserModel,
+    status,
+    modelData,
+    open,
+    setOpen,
+    errors,
+    handleModelDataChange,
+    handleUpdateItem,
+    handleDeleteItem,
+
+}) {
+
     const handleClose = () => setOpen(false);
 
     return (

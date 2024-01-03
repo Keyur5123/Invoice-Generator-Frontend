@@ -19,7 +19,8 @@ import SelectDropdown from "../../Components/SelectDropDown";
 export default function InvoicesList() {
 
   const navigate = useNavigate();
-  const { state, contextSnackbar, setContextSnackbar } = useInvoiceContext();
+  const { state, contextSnackbar, setContextSnackbar, userData } = useInvoiceContext();
+
   let { invoiceList, isUserAuthorized, isLoading } = state;
   const [searchData, setSearchData] = useState('');
   const [selectUserData, setSelectUserData] = useState('');
@@ -73,8 +74,6 @@ export default function InvoicesList() {
       <>
         <span className='flex justify-center main-header'>Invoices List</span>
 
-        {/* <div className='flex justify-end mt-4'> */}
-        {/* <div className='m-5 mr-0 w-1/3'> */}
         <div className='mt-10 grid md:grid-cols-4 sm:grid-cols-12'>
           <p></p>
           <p></p>
@@ -88,13 +87,12 @@ export default function InvoicesList() {
               Add New Item
             </Button>
           </Link>
-          {/* </div> */}
         </div>
 
         <div className='mt-7 grid grid-cols-1 md:grid-cols-4 sm:grid-cols-12'>
           <div className='flex justify-start '>
             <FormControl fullWidth size='small'>
-              <InputLabel htmlFor="outlined-adornment-amount">Search by name & challan, bill no</InputLabel>
+              <InputLabel htmlFor="outlined-adornment-amount">Search by Party Name & Challan, Bill No</InputLabel>
               <OutlinedInput
                 onChange={(e) => setSearchData(e.target.value)}
                 id="outlined-adornment-amount"
@@ -104,13 +102,13 @@ export default function InvoicesList() {
             </FormControl>
           </div>&nbsp;
           <p></p>
-          <div>
+          {userData.roleId == '1' && <div>
             <SelectDropdown
-              label={selectUserData ? '' : "All Users Data"}
+              label={selectUserData ? '' : "Select Users Data"}
               handleChange={handleChange}
               ipArray={invoiceUsers}
             />
-          </div>
+          </div>}
         </div>
 
         <Grid sx={{ marginTop: "0px" }} container spacing={3}>
@@ -120,6 +118,8 @@ export default function InvoicesList() {
               searchData={searchData}
               invoiceList={invoiceList.filter(invoice => selectUserData ? invoice?._id?.user_details?.user_name === selectUserData : invoice)}
               isPaginationAllowed={true}
+              contextSnackbar={contextSnackbar}
+              setContextSnackbar={setContextSnackbar}
             />
           </Grid>
         </Grid>

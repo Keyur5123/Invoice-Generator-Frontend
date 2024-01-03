@@ -20,12 +20,13 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import DescriptionIcon from '@mui/icons-material/Description';
 import CategoryIcon from '@mui/icons-material/Category';
 import InfoIcon from '@mui/icons-material/Info';
+import DeleteIcon from '@mui/icons-material/Delete';
 import GroupIcon from '@mui/icons-material/Group';
 import { Link } from 'react-router-dom';
 import { Avatar, Button, Container, Divider } from '@mui/material';
 import logo from '../../assets/images/logos/logo.png';
 import ConverImg from '../../assets/images/ConverImg.jpg';
-import { ReactComponent as Logout } from '../../assets/icons/logout.svg';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { SvgIcon } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import { useInvoiceContext } from "../../Context/InvoiceContext";
@@ -118,7 +119,7 @@ export default function PersistentDrawerLeft({ children }) {
                         <Button
                             onClick={handleLogOut}
                             variant="text"
-                            startIcon={<SvgIcon><Logout /></SvgIcon>}
+                            startIcon={<SvgIcon><LogoutIcon /></SvgIcon>}
                         >
                             Logout
                         </Button>
@@ -187,6 +188,14 @@ export default function PersistentDrawerLeft({ children }) {
                                     </ListItemButton>
                                 </ListItem>
                             </Link>}
+                            <ListItem disablePadding>
+                                <ListItemButton>
+                                    <ListItemIcon sx={{ color: 'sidebar.text.primary' }}>
+                                        <DeleteIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary='Trash' />
+                                </ListItemButton>
+                            </ListItem>
                             <ListItem disablePadding>
                                 <ListItemButton>
                                     <ListItemIcon sx={{ color: 'sidebar.text.primary' }}>

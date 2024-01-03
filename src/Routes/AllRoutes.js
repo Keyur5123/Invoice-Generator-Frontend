@@ -25,6 +25,7 @@ function AnimatedRoutes() {
                         <Route path="/" element={<ProtectedRoute token={token} Component={DashBoard} />} />
                         <Route path="/dashboard" element={<ProtectedRoute token={token} Component={DashBoard} />} />
                         <Route path="/add-new-invoice" element={<ProtectedRoute token={token} Component={AddNewInvoice} />} />
+                        <Route path="/update-invoice/:invoice_id" element={<ProtectedRoute token={token} Component={AddNewInvoice} />} />
                         <Route path="/generate-invoice-pdf/:invoice_id" element={<ProtectedRoute token={token} Component={GeneratePdf} />} />
                         <Route path="/invoice-list" element={<ProtectedRoute token={token} Component={InvoicesList} />} />
                         <Route path="/manage-product-and-party" element={<ProtectedRoute token={token} Component={ProductAndParty} />} />

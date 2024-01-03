@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     }
 });
 
-function TableHeader({ subHeaderData }) {
+function TableHeader({ HeaderData }) {
     return (
         <View style={styles.TableHeader}>
             <View style={styles.TablePrimaryHeader}>
@@ -97,19 +97,19 @@ function TableHeader({ subHeaderData }) {
                     <View style={styles.HeaderElements}>
                         <Text style={{ marginRight: "20px" }}>Party Name.</Text>
                         <View style={styles.HeaderElementsBorder}>
-                            <Text>{subHeaderData.party_name}</Text>
+                            <Text>{HeaderData.party_name}</Text>
                         </View>
                     </View>
                     <View style={styles.HeaderElements}>
                         <Text style={{ marginRight: "10px" }}>Add.</Text>
                         <View style={styles.HeaderElementsBorder}>
-                            <Text>{subHeaderData.address}</Text>
+                            <Text>{HeaderData.address}</Text>
                         </View>
                     </View>
                     <View style={styles.HeaderElements}>
                         <View style={{ width: '100%', justifyContent: 'center', alignContent: 'center', borderBottom: '1px solid blue', paddingTop: '12px' }}>
                             <Text>{''}</Text>
-                            {/* <Text>{subHeaderData.address}</Text> */}
+                            {/* <Text>{HeaderData.address}</Text> */}
                         </View>
                     </View>
                 </View>
@@ -117,19 +117,19 @@ function TableHeader({ subHeaderData }) {
                     <View style={styles.HeaderElements}>
                         <Text style={{ marginRight: "10px" }}>Bill No.</Text>
                         <View style={styles.HeaderElementsBorder}>
-                            <Text>{subHeaderData.bill_no}</Text>
+                            <Text>{HeaderData.bill_no}</Text>
                         </View>
                     </View>
                     <View style={styles.HeaderElements}>
                         <Text style={{ marginRight: "20px" }}>Party Ch No.</Text>
                         <View style={styles.HeaderElementsBorder}>
-                            <Text>{subHeaderData.partyChNo.join(',')}</Text>
+                            <Text>{HeaderData.partyChNo.join(',')}</Text>
                         </View>
                     </View>
                     <View style={styles.HeaderElements}>
                         <Text style={{ marginRight: "10px" }}>Date :</Text>
                         <View style={styles.HeaderElementsBorder}>
-                            <Text>{subHeaderData.date}</Text>
+                            <Text>{HeaderData.date}</Text>
                         </View>
                     </View>
                 </View>

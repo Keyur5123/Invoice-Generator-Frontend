@@ -5,6 +5,7 @@ export async function getAllUsers(userId,token) {
         headers: { 'Content-Type': 'application/json', Authentication: 'Bearer ' + token }
     })
         .then(res => res.json())
+        .catch(err => err);
 
     return res;
 }
@@ -17,6 +18,7 @@ export async function updateUserDetials(adminId, updatedUserData, token) {
         body: JSON.stringify(updatedUserData)
     })
         .then(res => res.json())
+        .catch(err => err);
 
     return res;
 }
@@ -27,6 +29,7 @@ export async function deleteUserDetails(userToDeleteId, token) {
         headers: { 'Content-Type': 'application/json', Authentication: 'Bearer ' + token }
     })
         .then(res => res.json())
+        .catch(err => err);
 
     return res;
 }

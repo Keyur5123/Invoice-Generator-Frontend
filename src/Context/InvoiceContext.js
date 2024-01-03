@@ -1,6 +1,7 @@
 import { createContext, useState, useContext, useEffect, useReducer } from "react";
 import reducer from "./InvoiceReducer";
 import Constants from "../Utilities/Constants/responseConstants";
+import { decryptData } from "../Utilities/Cryoto";
 import { getAllInvoices } from "../ApiController/InvoiceApis";
 import { getAllPartyNameAndProducts } from "../ApiController/ProductsAndPartyApis";
 
@@ -16,24 +17,26 @@ const initialState = {
 
 const AppProvider = ({ children }) => {
     let token = localStorage.getItem('invoice_dc_token');
-    let userData = JSON.parse(localStorage.getItem('userData'));
-    const [state, dispatch] = useReducer(reducer, initialState);
+    let storageRawUserData = localStorage.getItem('userData')
+    let userData = storageRawUserData && decryptData(storageRawUserData);
+    let [state, dispatch] = useReducer(reducer, initialState);
 
-    const [contextSnackbar, setContextSnackbar] = useState({
+    let [contextSnackbar, setContextSnackbar] = useState({
         status: false,
         message: '',
         severity: ''
-    })
+    });
 
-    const getInvoiceList = (token) => {
-        // dispatch({ type: 'SET_LOADING' })
+    let [is_paidStatusUpdated, setIs_paidStatusUpdated] = useState(false);
+
+    let getInvoiceList = (token) => {
         try {
             getAllInvoices(userData.userId, token)
                 .then(response => {
                     dispatch({ type: 'SET_LOADING_OFF' })
                     if (response?.data?.status === 200) {
-                        dispatch({ type: 'SET_INVOICE_DATA', payload: response.data.data })
-                        // setContextSnackbar({ ...contextSnackbar, status: true, message: response.data.msg, severity: Constants.SUCCESS })
+                        dispatch({ type: 'SET_INVOICE_PRODUCT_PARTY_DATA', payload: response.data.data })
+                        // setContextSnackbar({ ...contextSnackbar, status: true, message: response.data.msg, severity: letants.SUCCESS })
                     }
                     else if (response?.status === 401) {
                         dispatch({ type: 'SET_USER_NOT_AUTHORIZED' })
@@ -45,16 +48,15 @@ const AppProvider = ({ children }) => {
                 })
                 .catch(err => {
                     dispatch({ type: 'SET_LOADING_OFF' })
-                    setContextSnackbar({ ...contextSnackbar, status: true, message: err?.message, severity: Constants.ERROR })
+                    setContextSnackbar({ ...contextSnackbar, status: true, message: err?.message ?? err ? err.toString() : 'API ERROR', severity: Constants.ERROR })
                 })
         } catch (error) {
             dispatch({ type: 'SET_LOADING_OFF' })
-            setContextSnackbar({ ...contextSnackbar, status: true, message: error.toString(), severity: Constants.ERROR })
+            setContextSnackbar({ ...contextSnackbar, status: true, message: error ? error.toString() : 'API ERROR', severity: Constants.ERROR })
         }
     }
 
-    async function getAllPartyNameAndProductsList() {
-        // dispatch({ type: 'SET_LOADING' })
+    let getAllPartyNameAndProductsList = async () => {
         try {
             getAllPartyNameAndProducts(userData.userId, token)
                 .then(response => {
@@ -69,11 +71,11 @@ const AppProvider = ({ children }) => {
                 })
                 .catch(err => {
                     dispatch({ type: 'SET_LOADING_OFF' })
-                    setContextSnackbar({ ...contextSnackbar, status: true, message: err ? err.toString() : 'API ERROR', severity: Constants.ERROR });
+                    setContextSnackbar({ ...contextSnackbar, status: true, message: err?.message ?? err ? err.toString() : 'API ERROR', severity: Constants.ERROR });
                 });
-        } catch (error) {
+        } catch (err) {
             dispatch({ type: 'SET_LOADING_OFF' })
-            setContextSnackbar({ ...contextSnackbar, status: true, message: error?.toString(), severity: Constants.ERROR });
+            setContextSnackbar({ ...contextSnackbar, status: true, message: err?.message ?? err ? err.toString() : 'API ERROR', severity: Constants.ERROR });
         }
     }
 
@@ -84,7 +86,19 @@ const AppProvider = ({ children }) => {
     }, [token])
 
     return (
-        <AppContext.Provider value={{ state, dispatch, contextSnackbar, setContextSnackbar, userData, token, getAllPartyNameAndProductsList }}>
+        <AppContext.Provider value={
+            {
+                state,
+                dispatch,
+                contextSnackbar,
+                setContextSnackbar,
+                is_paidStatusUpdated,
+                setIs_paidStatusUpdated,
+                userData,
+                token,
+                getAllPartyNameAndProductsList
+            }
+        }>
             {children}
         </AppContext.Provider>
     )

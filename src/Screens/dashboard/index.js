@@ -15,16 +15,37 @@ import Snackbar from '../../Components/Snackbar';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 
 function Dashboard() {
-    const navigate = useNavigate();
-    const { state, contextSnackbar, setContextSnackbar } = useInvoiceContext();
+    let navigate = useNavigate();
+    let { state, contextSnackbar, setContextSnackbar, is_paidStatusUpdated, setIs_paidStatusUpdated } = useInvoiceContext();
     let { invoiceList, isUserAuthorized, isLoading } = state
-    const [totalPcs, setTotalPcs] = useState(0);
-    const [totalAmount, setTotalAmount] = useState(0);
+    let [totalPcs, setTotalPcs] = useState(0);
+    let [totalAmount, setTotalAmount] = useState(0);
+    let [moneyToBeTaken, setMoneyToBeTaken] = useState(0);
+    let [moneyToBeGranted, setMoneyToBeGranted] = useState(0);
 
     useEffect(() => {
-        let amount = invoiceList?.reduce((prev, next) => prev + next._id.billTotalAmount, 0);
-        setTotalAmount(amount)
-    }, [invoiceList]);
+        let TotalRevenue = invoiceList?.reduce((prev, next) => prev + next._id.billTotalAmount, 0);
+        setTotalAmount(TotalRevenue);
+
+        calcMoneyToBeTakenAndGranted(invoiceList)
+    }, [invoiceList, is_paidStatusUpdated]);
+
+    function calcMoneyToBeTakenAndGranted() {
+        let moneyToBeTaken = 0;
+        let moneyToBeGranted = 0;
+
+        invoiceList.forEach(element => {
+            if (element._id.paymentEntryStatus == 'in' && element._id.is_paid == false) {
+                moneyToBeTaken += element._id.billTotalAmount
+            }
+            else if (element._id.is_paid == false) {
+                moneyToBeGranted += element._id.billTotalAmount
+            }
+        });
+
+        setMoneyToBeTaken(moneyToBeTaken);
+        setMoneyToBeGranted(moneyToBeGranted);
+    }
 
     if (isLoading) {
         return <Loader />
@@ -84,8 +105,8 @@ function Dashboard() {
                             whileHover={{ scale: 1.03 }}
                         >
                             <AnalyseCard
-                                header="Potential Amount"
-                                amount="0,00,000"
+                                header="લેવાના બાકી"
+                                amount={moneyToBeTaken}
                                 trend="+55 %"
                                 icon={
                                     <CurrencyRupeeIcon sx={{ fontSize: "20px", color: "#fff" }} />
@@ -98,8 +119,8 @@ function Dashboard() {
                             whileHover={{ scale: 1.03 }}
                         >
                             <AnalyseCard
-                                header="Potential Amount"
-                                amount="0,00,000"
+                                header="આપવાના બાકી"
+                                amount={moneyToBeGranted}
                                 trend="+55 %"
                                 icon={
                                     <CurrencyRupeeIcon sx={{ fontSize: "20px", color: "#fff" }} />
@@ -112,12 +133,16 @@ function Dashboard() {
                 <div className='mb-7'>
                     <Charts invoiceList={invoiceList} setTotalPcs={setTotalPcs} />
                 </div>
-                                
+
                 <>
                     <Table
                         isExtractable={false}
                         invoiceList={invoiceList}
                         isPaginationAllowed={true}
+                        contextSnackbar={contextSnackbar}
+                        setContextSnackbar={setContextSnackbar}
+                        is_paidStatusUpdated={is_paidStatusUpdated}
+                        setIs_paidStatusUpdated={setIs_paidStatusUpdated}
                     />
                 </>
             </motion.div>

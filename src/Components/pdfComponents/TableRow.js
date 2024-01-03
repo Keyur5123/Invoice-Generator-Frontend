@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     }
 });
 
-let TableRow = ({ items }) => {
+let TableRow = ({ items, totalAmountBeforeDiscount }) => {
 
     const [tableHeaders, setTableHeaders] = useState([
         {
@@ -62,15 +62,6 @@ let TableRow = ({ items }) => {
             width: "15%",
         },
     ])
-    const [totalAmountBeforeDiscount, setTotalAmountBeforeDiscount] = useState(0);
-
-    useEffect(() => {
-        let total;
-        if (items) {
-            total = items.reduce((sum, i) => sum + i.item_amount, 0)
-        }
-        setTotalAmountBeforeDiscount(total)
-    }, [items])
 
     let headers = tableHeaders.map((item, index) => (
         <View

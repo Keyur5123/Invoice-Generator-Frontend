@@ -10,7 +10,7 @@ function GeneratePdf() {
     let { invoice_id } = useParams();
 
     const [invoiceData, setInvoiceData] = useState([]);
-
+    
     useEffect(() => {
         let filteredInvoices = invoiceList?.filter(invoice => {
             if (invoice._id._id == invoice_id) {

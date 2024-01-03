@@ -7,12 +7,6 @@ import { registerables, Chart, CategoryScale } from "chart.js";
 Chart.register(...registerables);    // for solving error :- linear undefined
 Chart.register(CategoryScale);    // for solving error :- category undefined
 
-function sortFunction(a, b) {
-    var dateA = new Date(a._id.date_created).getTime();
-    var dateB = new Date(b._id.date_created).getTime();
-    return dateB > dateA ? 1 : -1;
-};
-
 function Index({ invoiceList, setTotalPcs }) {
     const [pieChartData, setPieChartData] = useState({
         labels: '',
@@ -54,30 +48,45 @@ function Index({ invoiceList, setTotalPcs }) {
 
     function arrangePieChartData() {
         let array = [];
-        invoiceList.forEach(element => {
-            var obj = {};
-            obj.year = Number(element._id.date_created.split('-').reverse()[0])
-            obj.pcs = element.billItems.reduce((prev, next) => (
-                prev + next.pcs
-            ), 0)
+        let finalArr = [];
+        let yearsList = [];
 
-            if (array[array.length - 1]?.year == obj.year && array.length < 5) {
-                array[array.length - 1].pcs = array[array.length - 1].pcs + obj.pcs
+        invoiceList.forEach(element => {
+            let obj = {};
+            obj.year = Number((element._id.date_created.split('-').reverse())[0])
+            obj.pcs = element.billItems.reduce((prev, next) => (
+                prev + Number(next.pcs)
+            ), 0);
+            array.push(obj);
+        });
+        
+        array.forEach(obj => {
+            if(finalArr.length == 0){
+                yearsList.push(obj.year);
+                finalArr.push(obj);
             }
-            else if (array.length < 5) {
-                array.push(obj)
+            else {
+                finalArr.forEach(finalObj => {
+                    if(obj.year == finalObj.year){
+                        finalObj.pcs = Number(finalObj.pcs) + Number(obj.pcs);
+                    }
+                    else if(!yearsList.includes(obj.year)) {
+                        yearsList.push(obj.year);
+                        finalArr.push(obj);
+                    }
+                })
             }
         });
 
-        let totalPcs = array.reduce((prev, next) => prev + next.pcs, 0);
+        let totalPcs = array.reduce((prev, next) => prev + Number(next.pcs), 0);
         setTotalPcs(totalPcs);
 
         setPieChartData({
-            labels: array.map((data) => data.year),
+            labels: finalArr.map((data) => data.year),
             datasets: [
                 {
                     label: "Pcs ",
-                    data: array.map((data) => data.pcs),
+                    data: finalArr.map((data) => data.pcs),
                     backgroundColor: [
                         "rgba(75,192,192,1)",
                         "#f3ba3f",
@@ -98,11 +107,11 @@ function Index({ invoiceList, setTotalPcs }) {
             var obj = {};
             obj.year = Number(element._id.date_created.split('-').reverse()[1])
             obj.pcs = element.billItems.reduce((prev, next) => (
-                prev + next.pcs
+                prev + Number(next.pcs)
             ), 0)
 
             if (array[array.length - 1]?.year == obj.year && array.length < 5) {
-                array[array.length - 1].pcs = array[array.length - 1].pcs + obj.pcs
+                array[array.length - 1].pcs = array[array.length - 1].pcs + Number(obj.pcs)
             }
             else if (array.length < 5) {
                 array.push(obj)
@@ -111,7 +120,6 @@ function Index({ invoiceList, setTotalPcs }) {
 
         let totalPcs = array.reduce((prev, next) => prev + next.pcs, 0);
         setTotalPcs(totalPcs);
-
         setBarChartData({
             labels: array.map((data) => data.year),
             datasets: [
@@ -133,7 +141,6 @@ function Index({ invoiceList, setTotalPcs }) {
     }
 
     useEffect(() => {
-        invoiceList?.sort(sortFunction);
         invoiceList && arrangePieChartData();
         invoiceList && arrangeBarChartData();
     }, [invoiceList])

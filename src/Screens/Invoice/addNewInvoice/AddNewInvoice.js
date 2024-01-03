@@ -8,14 +8,14 @@ import Constants from "../../../Utilities/Constants/responseConstants";
 import { useInvoiceContext } from "../../../Context/InvoiceContext";
 import SelectCompo from "../../../Components/SelectDropDown";
 import Loader from "../../../Components/Loader";
-
+import { FormControlLabel, Switch } from '@mui/material';
+import { curr_date } from "../../../Utilities/date_funcs";
+import { useParams } from 'react-router-dom';  
 export default function Home() {
 
+  const invoice_id = useParams();
   const { state, contextSnackbar, setContextSnackbar } = useInvoiceContext();
-  let { partyNameList, isLoading } = state;
-
-  let currDate = new Date;
-  let formatedDate = [currDate.getDate(), currDate.getMonth() + 1, currDate.getFullYear()].join('-');
+  let { partyNameList, isLoading, invoiceList } = state;
 
   const [snackbarData, setSnackbarData] = useState({
     status: false,
@@ -26,12 +26,13 @@ export default function Home() {
     partyName: '',
     address: '',
     billNo: '',
-    date: formatedDate
+    date: curr_date
   });
 
   const [errors, setErrors] = useState({});
 
   const [billApiLoader, setBillApiLoader] = useState(false);
+  const [paymentEntryStatus, setPaymentEntryStatus] = useState(false);
 
   const validate = () => {
     let errObj = {};
@@ -53,6 +54,10 @@ export default function Home() {
         setBillHeaders({ ...billHeaders, partyName: e, address: partyFerm.address });
       }
     });
+  }
+
+  let handlePaymentEntryState = () => {
+    setPaymentEntryStatus(!paymentEntryStatus)
   }
 
   const Alert = React.forwardRef(function Alert(props, ref) {
@@ -87,6 +92,7 @@ export default function Home() {
                 <SelectCompo
                   handleChange={handlePartyName}
                   ipArray={partyNameList}
+                  label={invoice_id ? billHeaders.partyName : ''}
                 />
                 {errors.partyName && <p className='font-normal text-[12px] text-[#d54f4f] ml-4 mt-1'>{errors.partyName}</p>}
 
@@ -113,6 +119,7 @@ export default function Home() {
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <TextFieldControl
                 value={billHeaders.billNo}
+                type='number'
                 size='small'
                 label="Bill No."
                 name="billNo"
@@ -138,10 +145,19 @@ export default function Home() {
           </div>
         </div>
 
+        <div className='flex justify-center'>
+          <FormControlLabel
+            control={<Switch checked={paymentEntryStatus} onChange={handlePaymentEntryState} />}
+            label={`Payment Status :- ${paymentEntryStatus ? 'out'.toUpperCase() : 'in'.toUpperCase()}`}
+          />
+        </div>
+
         <BillItems
           billHeaders={billHeaders}
           setBillHeaders={setBillHeaders}
-          formatedDate={formatedDate}
+          formatedDate={curr_date}
+          paymentEntryStatus={paymentEntryStatus == false ? 'in' : 'out'}
+          setPaymentEntryStatus={setPaymentEntryStatus}
           validate={validate}
           snackbar={snackbarData}
           setSnackbar={setSnackbarData}

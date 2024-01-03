@@ -5,6 +5,7 @@ export async function getAllPartyNameAndProducts(userId, token) {
         headers: { Authentication: `Bearer ${token}` }
     })
         .then(res => res.json())
+        .catch(err => err);
 
     return res;
 }
@@ -17,6 +18,7 @@ export async function upsertProducts(productDetails, userId, token, updateValue 
         body: JSON.stringify({ productDetails, updateValue })
     })
         .then(res => res.json())
+        .catch(err => err);
 
     return res;
 }
@@ -31,6 +33,7 @@ export async function upsertPartyFerm(partyFermDetails, userId, token) {
         body: JSON.stringify(obj)
     })
         .then(res => res.json())
+        .catch(err => err);
 
     return res;
 }
@@ -41,6 +44,7 @@ export async function deleteProducts(productId, userId, token) {
         headers: { 'Content-Type': 'application/json', Authentication: 'Bearer ' + token }
     })
         .then(res => res.json())
+        .catch(err => err);
 
     return res;
 }
@@ -51,6 +55,7 @@ export async function deletePartyFerm(partyId, userId, token) {
         headers: { 'Content-Type': 'application/json', Authentication: 'Bearer ' + token }
     })
         .then(res => res.json())
+        .catch(err => err);
 
     return res;
 }

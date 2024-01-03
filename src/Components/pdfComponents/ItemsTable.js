@@ -15,19 +15,19 @@ const styles = StyleSheet.create({
 });
 
 const ItemsTable = ({ invoiceList }) => {
-  let subHeaderData = {};
-  subHeaderData.party_name = invoiceList._id.party_name;
-  subHeaderData.address = invoiceList._id.address;
-  subHeaderData.bill_no = invoiceList._id.bill_no;
-  subHeaderData.date = invoiceList._id.date_created;
-  subHeaderData.partyChNo = invoiceList.billItems.map((item) => {
+  let HeaderData = {};
+  HeaderData.party_name = invoiceList._id.party_name;
+  HeaderData.address = invoiceList._id.address;
+  HeaderData.bill_no = invoiceList._id.bill_no;
+  HeaderData.date = invoiceList._id.date_created;
+  HeaderData.partyChNo = invoiceList.billItems.map((item) => {
     return item.partyChNo
   });
 
   return (
     <View style={styles.tableContainer} >
-      <TableHeader subHeaderData={subHeaderData} />
-      <TableRow items={invoiceList.billItems} />
+      <TableHeader HeaderData={HeaderData} />
+      <TableRow items={invoiceList.billItems} totalAmountBeforeDiscount={invoiceList._id.billSubTotalAmount} />
       <TableFooter
         discount={invoiceList._id.discount}
         igst={invoiceList._id.igst}
